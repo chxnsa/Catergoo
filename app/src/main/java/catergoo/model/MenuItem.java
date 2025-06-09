@@ -8,7 +8,7 @@ import java.util.Set;
  * Menyediakan atribut dan method dasar yang dimiliki oleh semua item menu
  */
 
-public class MenuItem {
+public abstract class MenuItem {
     // Atribut dasar item menu
     private String itemName;         // Nama item menu
     private double pricePerPax;      // Harga per porsi
@@ -37,4 +37,48 @@ public class MenuItem {
         this.isCustomizable = isCustomizable;
         this.bookedDates = new HashSet<>();
     }
+
+    /**
+     * Method abstrak untuk menampilkan informasi item
+     * @return String informasi item yang akan ditampilkan ke pengguna
+     */
+    public abstract String displayInfo();
+
+    /**
+     * Mengecek ketersediaan tanggal untuk pemesanan
+     * @param date Tanggal yang ingin dicek
+     * @return true jika tanggal tersedia, false jika sudah dibooking
+     */
+    public boolean isDateAvailable(LocalDate date) {
+        // Tanggal tidak tersedia jika sudah dibooking atau sebelum tanggal minimal booking
+        return !bookedDates.contains(date) && !date.isBefore(getMinBookingDate(1));
+    }
+
+    /**
+     * Membooking tanggal untuk item ini
+     * @param date Tanggal yang akan dibooking
+     */
+    public void bookDate(LocalDate date) {
+        bookedDates.add(date);
+    }
+
+    /**
+     * Menghitung tanggal minimal booking berdasarkan quantity
+     * @param quantity Jumlah porsi yang dipesan
+     * @return Tanggal minimal yang bisa dipilih untuk pemesanan
+     */
+    public LocalDate getMinBookingDate(int quantity) {
+        LocalDate today = LocalDate.now();
+        // Jika pesanan > 50 pax, minimal booking H-2, jika tidak H-1
+        return quantity > 50 ? today.plusDays(2) : today.plusDays(1);
+    }
+
+    // =========== Getter Methods ===========
+    public String getItemName() { return itemName; }
+    public double getPricePerPax() { return pricePerPax; }
+    public int getMinOrder() { return minOrder; }
+    public String getDescription() { return description; }
+    public String getImagePath() { return imagePath; }
+    public boolean isCustomizable() { return isCustomizable; }
+    public Set<LocalDate> getBookedDates() { return bookedDates; }
 }
