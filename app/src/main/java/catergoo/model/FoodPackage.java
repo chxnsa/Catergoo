@@ -93,4 +93,20 @@ public class FoodPackage extends MenuItem implements Customizeable {
         LocalDate today = LocalDate.now();
         return quantity > 50 ? today.plusDays(2) : today.plusDays(1);
     }
+
+    /**
+     * Menghitung total harga berdasarkan jumlah porsi
+     * @param quantity Jumlah porsi yang dipesan
+     * @return Total harga (pricePerPax * quantity)
+     */
+    public double calculatePrice(int quantity) {
+        return getPricePerPax() * quantity;
+    }
+
+    // =========== Getter Methods ===========
+    public List<String> getVegetableOptions() { return vegetableOptions; }
+    public List<String> getSideDishOptions() { return sideDishOptions; }
+    public List<String> getFruitOptions() { return fruitOptions; }
+    public boolean isIncludeCrackers() { return includeCrackers; }
 }
+
