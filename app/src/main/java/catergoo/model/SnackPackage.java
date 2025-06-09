@@ -33,4 +33,51 @@ public class SnackPackage extends MenuItem implements Customizeable {
         this.snackChoices = snackChoices;
     }
 
+    /**
+     * Menampilkan informasi dasar paket snack
+     * @return String informasi paket dalam format "[Nama] - Rp [Harga]/pax (Min: [MinOrder] pcs)"
+     */
+    @Override
+    public String displayInfo() {
+        return String.format("[%s] - Rp %.0f/pax (Min: %d pcs)", 
+               getItemName(), getPricePerPax(), getMinOrder());
+    }
+
+    /**
+     * Mendapatkan deskripsi kustomisasi snack yang dipilih
+     * @return String yang menggabungkan semua pilihan kustomisasi snack
+     */
+    @Override
+    public String getSelectedCustomizations() {
+        StringBuilder sb = new StringBuilder();
+        if (selectedSnacks != null) {
+            selectedSnacks.forEach((category, choice) -> 
+                sb.append(category).append(": ").append(choice).append(", "));
+            return sb.length() > 0 ? sb.substring(0, sb.length() - 2) : "";
+        }
+        return "";
+    }
+
+    /**
+     * Menerapkan pilihan kustomisasi snack dari user
+     * @param selections Map berisi pilihan kustomisasi dengan key sebagai kategori snack
+     */
+    @Override
+    public void applyCustomizations(Map<String, String> selections) {
+        this.selectedSnacks = selections;
+    }
+
+    /**
+     * Override method untuk menghitung tanggal minimal booking
+     * @param quantity Jumlah porsi yang dipesan
+     * @return Tanggal minimal booking (H-2 jika >50 pcs, H-1 jika ≤50 pcs)
+     */
+    @Override
+    public LocalDate getMinBookingDate(int quantity) {
+        LocalDate today = LocalDate.now();
+        return quantity > 50 ? today.plusDays(2) : today.plusDays(1);
+    }
+
+    // Getter untuk pilihan snack
+    public Map<String, List<String>> getSnackChoices() { return snackChoices; }
 }
