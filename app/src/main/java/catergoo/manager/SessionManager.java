@@ -23,4 +23,28 @@ public class SessionManager {
         return registeredUsers.stream().anyMatch(user -> user.getUsername().equals(username));
     }
 
+    public static boolean registerUser(User user) {
+        if (user == null || isUserRegistered(user.getUsername())) {
+            return false;
+        }
+
+        registeredUsers.add(user);
+        return true;
+    }
+
+    public static boolean loginUser(String username, String password) {
+        if (username == null || password == null) {
+            return false;
+        }
+
+        for (User user : registeredUsers) {
+            if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
+                currentUser = user;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 }
