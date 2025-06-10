@@ -16,5 +16,11 @@ public class SessionManager {
         return currentUser;
     }
 
-    // TODO : menambahkan method isUserRegistered, registerUser dan loginUser.
+    public static boolean isUserRegistered(String username) {
+        if (username == null)
+            return false;
+
+        return registeredUsers.stream().anyMatch(user -> user.getUsername().equals(username));
+    }
+
 }
