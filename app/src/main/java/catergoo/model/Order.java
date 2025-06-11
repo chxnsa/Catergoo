@@ -4,9 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class Order {
-  // Atribut dari kelas Order
   private String orderId;
-  private User user; // Referensi ke pengguna yang memesan
+  private User user;
   private List<CartItem> items;
   private double totalAmount;
   private String deliveryAddress;
@@ -15,9 +14,6 @@ public class Order {
   private String paymentProofPath;
   private String status;
 
-  /**
-   * Constructor untuk kelas Order.
-   */
   public Order(String orderId, User user, List<CartItem> items, double totalAmount, String deliveryAddress,
       String paymentMethod, String paymentProofPath) {
     this.orderId = orderId;
@@ -27,11 +23,10 @@ public class Order {
     this.deliveryAddress = deliveryAddress;
     this.paymentMethod = paymentMethod;
     this.paymentProofPath = paymentProofPath;
-    this.orderDate = LocalDateTime.now(); // Waktu pesanan dibuat
-    this.status = "Menunggu Konfirmasi"; // Status awal
+    this.orderDate = LocalDateTime.now();
+    this.status = "Menunggu Konfirmasi";
   }
 
-  // --- Getters ---
   public String getOrderId() {
     return orderId;
   }
