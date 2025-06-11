@@ -8,23 +8,22 @@ import java.time.LocalDate;
  * Contoh: Paket Risol, Paket Kue, dll.
  * Mengimplementasikan interface Customizable dengan pilihan yang lebih fleksibel
  */
-
 public class SnackPackage extends MenuItem implements Customizeable {
-    // Map pilihan snack dengan key sebagai kategori dan value sebagai list pilihan
+
     private Map<String, List<String>> snackChoices;
-    
-    // Map pilihan snack yang dipilih user
     private Map<String, String> selectedSnacks;
 
-    /**
-     * Constructor untuk inisialisasi paket snack
-     * @param itemName Nama paket
-     * @param pricePerPax Harga per porsi
-     * @param minOrder Minimal pemesanan (dalam pcs)
-     * @param description Deskripsi paket
-     * @param imagePath Path gambar paket
-     * @param snackChoices Map pilihan snack (key: kategori, value: list pilihan)
-     */
+    
+    //Constructor untuk inisialisasi paket snack yang TIDAK bisa dikustomisasi
+    public SnackPackage(String itemName, double pricePerPax, int minOrder,
+                       String description, String imagePath) {
+        // Memanggil constructor parent class (MenuItem) dengan isCustomizable = false
+        super(itemName, pricePerPax, minOrder, description, imagePath, false);
+        this.snackChoices = null; // Tidak ada pilihan kustomisasi
+        this.selectedSnacks = null; // Tidak ada pilihan yang dipilih
+    }
+
+    //Constructor untuk inisialisasi paket snack yang bisa dikustomisasi
     public SnackPackage(String itemName, double pricePerPax, int minOrder, 
                        String description, String imagePath,
                        Map<String, List<String>> snackChoices) {
@@ -35,7 +34,7 @@ public class SnackPackage extends MenuItem implements Customizeable {
 
     /**
      * Menampilkan informasi dasar paket snack
-     * @return String informasi paket dalam format "[Nama] - Rp [Harga]/pax (Min: [MinOrder] pcs)"
+     * Mengembalikan string informasi paket dalam format "[Nama] - Rp [Harga]/pax (Min: [MinOrder] pcs)"
      */
     @Override
     public String displayInfo() {
@@ -45,7 +44,7 @@ public class SnackPackage extends MenuItem implements Customizeable {
 
     /**
      * Mendapatkan deskripsi kustomisasi snack yang dipilih
-     * @return String yang menggabungkan semua pilihan kustomisasi snack
+     * Mengembalikan String yang menggabungkan semua pilihan kustomisasi snack
      */
     @Override
     public String getSelectedCustomizations() {
@@ -60,7 +59,7 @@ public class SnackPackage extends MenuItem implements Customizeable {
 
     /**
      * Menerapkan pilihan kustomisasi snack dari user
-     * @param selections Map berisi pilihan kustomisasi dengan key sebagai kategori snack
+     * Map berisi pilihan kustomisasi dengan key sebagai kategori snack
      */
     @Override
     public void applyCustomizations(Map<String, String> selections) {
@@ -69,8 +68,8 @@ public class SnackPackage extends MenuItem implements Customizeable {
 
     /**
      * Override method untuk menghitung tanggal minimal booking
-     * @param quantity Jumlah porsi yang dipesan
-     * @return Tanggal minimal booking (H-2 jika >50 pcs, H-1 jika ≤50 pcs)
+     * Jumlah porsi yang dipesan
+     * Mengembalikan jumlah tanggal minimal booking (H-2 jika >50 pcs, H-1 jika ≤50 pcs)
      */
     @Override
     public LocalDate getMinBookingDate(int quantity) {
