@@ -8,7 +8,6 @@ import java.time.LocalDate;
  * Contoh: Paket Daging, Paket Ayam, dll.
  * Mengimplementasikan interface Customizable untuk mendukung kustomisasi
  */
-
 public class FoodPackage extends MenuItem implements Customizeable {
     // Daftar pilihan kustomisasi
     private List<String> vegetableOptions;  // Pilihan sayur (Capcay, Tumis Buncis, dll)
@@ -22,18 +21,18 @@ public class FoodPackage extends MenuItem implements Customizeable {
     private String selectedFruit;
     private boolean selectedIncludeCrackers;
 
-    /**
-     * Constructor untuk inisialisasi paket makanan 
-     * @param itemName Nama paket
-     * @param pricePerPax Harga per porsi
-     * @param minOrder Minimal pemesanan
-     * @param description Deskripsi paket
-     * @param imagePath Path gambar paket
-     * @param vegetableOptions List pilihan sayur
-     * @param sideDishOptions List pilihan lauk tambahan
-     * @param fruitOptions List pilihan buah
-     * @param includeCrackers Flag default untuk kerupuk
-     */
+    //Constructor untuk paket makanan yang TIDAK bisa dikustomisasi
+    public FoodPackage(String itemName, double pricePerPax, int minOrder,
+                      String description, String imagePath) {
+        // Memanggil constructor parent dengan isCustomizable = false
+        super(itemName, pricePerPax, minOrder, description, imagePath, false);
+        this.vegetableOptions = null;
+        this.sideDishOptions = null;
+        this.fruitOptions = null;
+        this.includeCrackers = false;
+    }
+
+    //Constructor untuk paket makanan yang bisa dikustomisasi
     public FoodPackage(String itemName, double pricePerPax, int minOrder, 
                       String description, String imagePath,
                       List<String> vegetableOptions, List<String> sideDishOptions, 
@@ -48,7 +47,7 @@ public class FoodPackage extends MenuItem implements Customizeable {
 
     /**
      * Menampilkan informasi dasar paket makanan
-     * @return String informasi paket dalam format "[Nama] - Rp [Harga]/pax (Min: [MinOrder] pax)"
+     * Mengembalikan String informasi paket dalam format "[Nama] - Rp [Harga]/pax (Min: [MinOrder] pax)"
      */
     @Override
     public String displayInfo() {
@@ -58,10 +57,14 @@ public class FoodPackage extends MenuItem implements Customizeable {
 
     /**
      * Mendapatkan deskripsi kustomisasi yang dipilih
-     * @return String yang menggabungkan semua pilihan kustomisasi
+     * Mengembalikan String yang menggabungkan semua pilihan kustomisasi
      */
     @Override
     public String getSelectedCustomizations() {
+        if (!isCustomizable()) {
+            return "Paket standar (tidak bisa dikustomisasi)";
+        }
+        
         StringBuilder sb = new StringBuilder();
         if (selectedVegetable != null) sb.append(selectedVegetable).append(", ");
         if (selectedSideDish != null) sb.append(selectedSideDish).append(", ");
@@ -72,21 +75,23 @@ public class FoodPackage extends MenuItem implements Customizeable {
 
     /**
      * Menerapkan pilihan kustomisasi dari user
-     * @param selections Map berisi pilihan kustomisasi dengan key:
+     * Selection Map berisi pilihan kustomisasi dengan key:
      *                   "vegetable", "sideDish", "fruit", "includeCrackers"
      */
     @Override
     public void applyCustomizations(Map<String, String> selections) {
-        this.selectedVegetable = selections.get("vegetable");
-        this.selectedSideDish = selections.get("sideDish");
-        this.selectedFruit = selections.get("fruit");
-        this.selectedIncludeCrackers = Boolean.parseBoolean(selections.get("includeCrackers"));
+        if (isCustomizable()) {
+            this.selectedVegetable = selections.get("vegetable");
+            this.selectedSideDish = selections.get("sideDish");
+            this.selectedFruit = selections.get("fruit");
+            this.selectedIncludeCrackers = Boolean.parseBoolean(selections.get("includeCrackers"));
+        }
     }
 
     /**
      * Override method untuk menghitung tanggal minimal booking
-     * @param quantity Jumlah porsi yang dipesan
-     * @return Tanggal minimal booking (H-2 jika >50 pax, H-1 jika ≤50 pax)
+     * Menghitung Jumlah porsi yang dipesan
+     * Mengembalikan Tanggal minimal booking (H-2 jika >50 pax, H-1 jika ≤50 pax)
      */
     @Override
     public LocalDate getMinBookingDate(int quantity) {
@@ -96,8 +101,8 @@ public class FoodPackage extends MenuItem implements Customizeable {
 
     /**
      * Menghitung total harga berdasarkan jumlah porsi
-     * @param quantity Jumlah porsi yang dipesan
-     * @return Total harga (pricePerPax * quantity)
+     * Menghitung Jumlah porsi yang dipesan
+     * Mengembalikan Total harga (pricePerPax * quantity)
      */
     public double calculatePrice(int quantity) {
         return getPricePerPax() * quantity;
@@ -109,4 +114,3 @@ public class FoodPackage extends MenuItem implements Customizeable {
     public List<String> getFruitOptions() { return fruitOptions; }
     public boolean isIncludeCrackers() { return includeCrackers; }
 }
-
