@@ -26,7 +26,7 @@ public abstract class MenuItem {
 
     public abstract String displayInfo();
 
-    public abstract double calculatePrice(int quantity); // FIXED: Added quantity parameter
+    public abstract double calculatePrice(int quantity);
 
     public boolean isDateAvailable(LocalDate date) {
         return !bookedDates.contains(date) && !date.isBefore(getMinBookingDate(1));
