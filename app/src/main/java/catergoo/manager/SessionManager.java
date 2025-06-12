@@ -47,4 +47,8 @@ public class SessionManager {
         return false;
     }
 
+    public static List<User> getRegisteredUsers() {
+        return registeredUsers;
+    }
+
 }
