@@ -4,13 +4,14 @@ import java.time.LocalDate;
 
 public class CartItem {
   private MenuItem menuItem;
-  private int quantity;
+  private int quantity; // Fixed: Changed from double to int
   private LocalDate deliveryDate;
   private String specialNotes;
   private String customizations;
   private double subTotal;
 
-  public CartItem(MenuItem menuItem, int quantity, LocalDate deliveryDate, String customizations, String specialNotes) {
+  public CartItem(MenuItem menuItem, int quantity, LocalDate deliveryDate, String customizations,
+      String specialNotes) {
     this.menuItem = menuItem;
     this.quantity = quantity;
     this.deliveryDate = deliveryDate;
@@ -19,7 +20,6 @@ public class CartItem {
     this.subTotal = menuItem.calculatePrice(quantity);
   }
 
-  // Mengupdate kuantitas dan menghitung ulang subtotal.
   public void updateQuantity(int newQuantity) {
     this.quantity = newQuantity;
     this.subTotal = this.menuItem.calculatePrice(newQuantity);
