@@ -8,6 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
+import javafx.scene.shape.Rectangle;
 
 public class MenuItemCard {
     private VBox card;
@@ -32,7 +33,12 @@ public class MenuItemCard {
         if (imageView.getImage() == null) {
             imageView = UIUtil.createImageView("/images/placeholder/food-placeholder.jpg", cardWidth - 30, 150);
         }
-        imageView.setStyle("-fx-background-radius: 8;");
+
+        // Create rounded corners for image
+        Rectangle clip = new Rectangle(cardWidth - 30, 150);
+        clip.setArcWidth(16); // Rounded corners
+        clip.setArcHeight(16);
+        imageView.setClip(clip);
 
         Label nameLabel = new Label(menuItem.getItemName());
         nameLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: black;");
