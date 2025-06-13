@@ -88,15 +88,19 @@ Aplikasi Catergoo memudahkan Anda memesan katering untuk berbagai acara. Berikut
 
 ### 3. 🔐 Login ke Aplikasi
 
-![Login Screen](assets/login-screen.png)
+![Welcome Screen](assets/welcome-screen.png)
 
 1. **Akses Halaman Masuk**:
    - Dari halaman Welcome, klik **Masuk**.
 2. **Isi Formulir**:
    - Masukkan **Username** dan **Kata Sandi** yang telah didaftarkan.
+  
+![Login Screen](assets/login-screen.png)
 3. **Submit Login**:
    - Klik tombol **Masuk** untuk masuk ke aplikasi.
    - Jika belum memiliki akun, klik tautan **Belum punya akun? Daftar** untuk menuju halaman registrasi.
+![Regist Screen](assets/regist-screen.png)
+
 4. **Hasil**:
    - Jika login berhasil, Anda akan masuk ke halaman **Home** aplikasi utama.
 
@@ -180,6 +184,8 @@ Aplikasi Catergoo memudahkan Anda memesan katering untuk berbagai acara. Berikut
    - Halaman ini menampilkan pesanan sebelumnya, misalnya:
      - **Paket Daging** 🥩: 100 pax, tanggal 19 Juni 2025, subtotal Rp 3.000.000, status **Menunggu Konfirmasi** ⏳.
      - **Paket Risol** 🥟: 100 pax, tanggal 19 Juni 2025, subtotal Rp 900.000, status **Menunggu Konfirmasi** ⏳.
+    
+![Detail Screen](assets/order-detail-screen.png)
 3. **Detail Pesanan**:
    - Klik **Lihat Detail** untuk melihat kustomisasi dan informasi lengkap pesanan.
 4. **Pembaruan Status** 🔄:
