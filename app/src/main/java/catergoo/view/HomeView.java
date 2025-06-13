@@ -75,7 +75,6 @@ public class HomeView {
 
         filterButtons = new ArrayList<>();
 
-        // Removed "Paket" category as requested
         String[] filters = { "Semua", "Nasi Kotak", "Kotak Snack" };
 
         for (String filter : filters) {

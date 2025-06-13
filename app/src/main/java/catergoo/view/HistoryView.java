@@ -137,9 +137,15 @@ public class HistoryView {
         HBox itemsPreview = new HBox(10);
         itemsPreview.setAlignment(Pos.CENTER_LEFT);
 
-        if (!order.getItems().isEmpty()) {
+        // Debug: Print order items count
+        System.out.println("Order " + order.getOrderId() + " has " + order.getItems().size() + " items");
 
+        if (order.getItems() != null && !order.getItems().isEmpty()) {
+            // Get the first item from THIS specific order
             CartItem firstOrderItem = order.getItems().get(0);
+
+            // Debug: Print item details
+            System.out.println("First item: " + firstOrderItem.getMenuItem().getItemName());
 
             ImageView firstItemImage = UIUtil.createImageView(
                     firstOrderItem.getMenuItem().getImagePath(), 60, 60);
@@ -147,6 +153,7 @@ public class HistoryView {
                 firstItemImage = UIUtil.createImageView("/images/placeholder/food-placeholder.jpg", 60, 60);
             }
 
+            // Add rounded corners to image
             Rectangle clip = new Rectangle(60, 60);
             clip.setArcWidth(12);
             clip.setArcHeight(12);
@@ -157,13 +164,24 @@ public class HistoryView {
             Label itemNameLabel = new Label(firstOrderItem.getMenuItem().getItemName());
             itemNameLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
 
-            String itemsText = order.getItems().size() == 1 ? "1 item" : order.getItems().size() + " items";
+            String itemsText;
+            if (order.getItems().size() == 1) {
+                itemsText = "1 item";
+            } else {
+                int additionalItems = order.getItems().size() - 1;
+                itemsText = "dan " + additionalItems + " item lainnya";
+            }
             Label itemCountLabel = new Label(itemsText);
             itemCountLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: gray;");
 
             itemDetails.getChildren().addAll(itemNameLabel, itemCountLabel);
 
             itemsPreview.getChildren().addAll(firstItemImage, itemDetails);
+        } else {
+            // Fallback if no items found
+            Label noItemsLabel = new Label("Tidak ada item ditemukan");
+            noItemsLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: gray;");
+            itemsPreview.getChildren().add(noItemsLabel);
         }
 
         HBox actionContainer = new HBox();
@@ -184,7 +202,7 @@ public class HistoryView {
     }
 
     private void showOrderDetail(Order order) {
-
+        // Create modal stage for detail view
         Stage detailStage = new Stage();
         detailStage.initModality(Modality.APPLICATION_MODAL);
         detailStage.initOwner(sceneManager.getPrimaryStage());
@@ -196,9 +214,11 @@ public class HistoryView {
         detailContainer.setStyle("-fx-background-color: white;");
         detailContainer.setPrefWidth(600);
 
+        // Header
         Label titleLabel = new Label("Detail Pesanan " + order.getOrderId());
         titleLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: " + UIUtil.PRIMARY_COLOR + ";");
 
+        // Order info
         VBox orderInfoSection = new VBox(8);
 
         Label statusLabel = new Label("Status: ");
@@ -234,7 +254,12 @@ public class HistoryView {
         VBox itemsList = new VBox(10);
         itemsList.setPadding(new Insets(10));
 
+        System.out.println("Detail view showing " + order.getItems().size() + " items for order " + order.getOrderId());
+
         for (CartItem item : order.getItems()) {
+
+            System.out.println("Item: " + item.getMenuItem().getItemName() + " - Qty: " + item.getQuantity());
+
             HBox itemRow = new HBox(15);
             itemRow.setAlignment(Pos.CENTER_LEFT);
             itemRow.setPadding(new Insets(10));
@@ -262,6 +287,20 @@ public class HistoryView {
             Label deliveryDateLabel = new Label("Tanggal: " + DateUtil.formatDate(item.getDeliveryDate()));
             deliveryDateLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: gray;");
 
+            if (item.getCustomizations() != null && !item.getCustomizations().isEmpty()) {
+                Label customLabel = new Label("Kustom: " + item.getCustomizations());
+                customLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: gray;");
+                customLabel.setWrapText(true);
+                itemInfo.getChildren().add(customLabel);
+            }
+
+            if (item.getSpecialNotes() != null && !item.getSpecialNotes().isEmpty()) {
+                Label notesLabel = new Label("Catatan: " + item.getSpecialNotes());
+                notesLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: gray;");
+                notesLabel.setWrapText(true);
+                itemInfo.getChildren().add(notesLabel);
+            }
+
             itemInfo.getChildren().addAll(itemNameLabel, quantityLabel, deliveryDateLabel);
 
             Label priceLabel = new Label(UIUtil.formatCurrency(item.getSubTotal()));
@@ -274,6 +313,7 @@ public class HistoryView {
 
         itemsScrollPane.setContent(itemsList);
 
+        // Total
         HBox totalContainer = new HBox();
         totalContainer.setAlignment(Pos.CENTER_RIGHT);
         totalContainer.setPadding(new Insets(10, 0, 0, 0));
@@ -283,6 +323,7 @@ public class HistoryView {
 
         totalContainer.getChildren().add(totalLabel);
 
+        // Close button
         Button closeButton = new Button("Tutup");
         closeButton.setPrefSize(150, 40);
         closeButton.setStyle("-fx-background-color: " + UIUtil.PRIMARY_COLOR +

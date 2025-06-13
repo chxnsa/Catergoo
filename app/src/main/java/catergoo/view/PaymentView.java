@@ -17,6 +17,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PaymentView {
@@ -89,7 +90,6 @@ public class PaymentView {
         firstHBox.setAlignment(Pos.CENTER);
         firstHBox.setPrefWidth(500);
 
-        // Left side: Payment Amount
         VBox leftSide = new VBox(5);
         leftSide.setAlignment(Pos.CENTER);
         leftSide.setPrefWidth(250);
@@ -103,7 +103,6 @@ public class PaymentView {
 
         leftSide.getChildren().addAll(amountTextLabel, paymentAmountLabel);
 
-        // Right side: Payment Type Selection
         VBox rightSide = new VBox(8);
         rightSide.setAlignment(Pos.CENTER_LEFT);
         rightSide.setPrefWidth(250);
@@ -130,7 +129,6 @@ public class PaymentView {
         secondHBox.setAlignment(Pos.TOP_CENTER);
         secondHBox.setPrefWidth(500);
 
-        // Left side: Account Details & Instructions
         VBox leftSide = new VBox(10);
         leftSide.setAlignment(Pos.CENTER);
         leftSide.setPrefWidth(250);
@@ -141,7 +139,6 @@ public class PaymentView {
         accountNumberLabel = new Label("BCA 098123765341");
         accountNumberLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
 
-        // Instructions
         Label instructionsLabel = new Label("Tata Cara Pembayaran");
         instructionsLabel.setStyle("-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #666;");
 
@@ -170,7 +167,6 @@ public class PaymentView {
 
         leftSide.getChildren().addAll(accountTextLabel, accountNumberLabel, instructionsLabel, instructionsContainer);
 
-        // Right side: Bank Selection
         VBox rightSide = new VBox(8);
         rightSide.setAlignment(Pos.CENTER_LEFT);
         rightSide.setPrefWidth(250);
@@ -332,10 +328,20 @@ public class PaymentView {
         if (currentUser != null) {
             String orderId = DateUtil.generateOrderId();
 
+            List<CartItem> orderItems = new ArrayList<>();
+            for (CartItem item : cartItems) {
+                CartItem orderItem = new CartItem(
+                        item.getMenuItem(),
+                        item.getQuantity(),
+                        item.getDeliveryDate(),
+                        item.getCustomizations(),
+                        item.getSpecialNotes());
+                orderItems.add(orderItem);
+            }
             Order order = new Order(
                     orderId,
                     currentUser,
-                    cartItems,
+                    orderItems,
                     totalAmount,
                     address,
                     paymentMethod,

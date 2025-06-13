@@ -35,9 +35,8 @@ public class CartItemRow {
             itemImage = UIUtil.createImageView("/images/placeholder/food-placeholder.jpg", 80, 80);
         }
 
-        // Create rounded corners for image
         Rectangle clip = new Rectangle(80, 80);
-        clip.setArcWidth(16); // Rounded corners
+        clip.setArcWidth(16);
         clip.setArcHeight(16);
         itemImage.setClip(clip);
 
