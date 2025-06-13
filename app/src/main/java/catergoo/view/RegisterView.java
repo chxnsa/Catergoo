@@ -13,6 +13,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.Parent;
+import javafx.animation.FadeTransition;
+import javafx.util.Duration;
 
 public class RegisterView {
     private SceneManager sceneManager;
@@ -26,17 +28,14 @@ public class RegisterView {
     }
 
     private void initializeView() {
-        // Create background with food image
+
         StackPane background = UIUtil.createWelcomeBackground("/images/background/food-bg.jpg");
 
-        // Create register modal
-        VBox registerModal = UIUtil.createModal(450, 500);
+        VBox registerModal = UIUtil.createModal(450, 550);
 
-        // Title
         Label titleLabel = new Label("Daftar");
         titleLabel.setStyle("-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: black;");
 
-        // Username field
         VBox usernameContainer = new VBox(8);
         Label usernameLabel = new Label("Username");
         usernameLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
@@ -50,7 +49,6 @@ public class RegisterView {
 
         usernameContainer.getChildren().addAll(usernameLabel, usernameField, usernameHint);
 
-        // Password field
         VBox passwordContainer = new VBox(8);
         Label passwordLabel = new Label("Kata Sandi");
         passwordLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
@@ -64,7 +62,6 @@ public class RegisterView {
 
         passwordContainer.getChildren().addAll(passwordLabel, passwordField, passwordHint);
 
-        // Register button
         Button registerButton = new Button("Daftar");
         registerButton.setPrefSize(380, 50);
         registerButton.setStyle("-fx-background-color: " + UIUtil.PRIMARY_COLOR +
@@ -72,7 +69,6 @@ public class RegisterView {
                 "; -fx-background-radius: 25; -fx-cursor: hand;");
         registerButton.setOnAction(e -> handleRegister());
 
-        // Login link
         HBox loginContainer = new HBox(5);
         loginContainer.setAlignment(Pos.CENTER);
 
@@ -82,35 +78,60 @@ public class RegisterView {
         Label loginLink = new Label("Masuk");
         loginLink.setStyle("-fx-font-size: 14px; -fx-text-fill: " + UIUtil.BLUE_LINK +
                 "; -fx-cursor: hand; -fx-underline: true;");
-        loginLink.setOnMouseClicked(e -> sceneManager.showLoginView());
+        loginLink.setOnMouseClicked(e -> {
+            fadeTransition(() -> sceneManager.showLoginView());
+        });
 
         loginContainer.getChildren().addAll(loginPrompt, loginLink);
 
-        // Add all elements to modal
+        HBox navButtons = new HBox(10);
+        navButtons.setAlignment(Pos.CENTER);
+
+        Button backButton = new Button("Kembali");
+        backButton.setPrefSize(120, 35);
+        backButton.setStyle("-fx-background-color: " + UIUtil.LIGHT_GRAY +
+                "; -fx-text-fill: black; -fx-background-radius: 15;");
+        backButton.setOnAction(e -> {
+            fadeTransition(() -> sceneManager.showWelcomeView());
+        });
+
+        navButtons.getChildren().addAll(backButton);
+
         registerModal.getChildren().addAll(
                 titleLabel,
                 usernameContainer,
                 passwordContainer,
                 registerButton,
-                loginContainer);
+                loginContainer,
+                navButtons);
 
-        // Center the modal
         registerModal.setAlignment(Pos.CENTER);
 
-        // Create root with background and modal
         root = new StackPane();
         root.getChildren().addAll(background, registerModal);
         StackPane.setAlignment(registerModal, Pos.CENTER);
 
-        // Add enter key support
         passwordField.setOnAction(e -> handleRegister());
+
+        registerModal.setOpacity(0);
+        FadeTransition fadeIn = new FadeTransition(Duration.millis(500), registerModal);
+        fadeIn.setFromValue(0.0);
+        fadeIn.setToValue(1.0);
+        fadeIn.play();
+    }
+
+    private void fadeTransition(Runnable action) {
+        FadeTransition fadeOut = new FadeTransition(Duration.millis(300), root);
+        fadeOut.setFromValue(1.0);
+        fadeOut.setToValue(0.0);
+        fadeOut.setOnFinished(e -> action.run());
+        fadeOut.play();
     }
 
     private void handleRegister() {
         String username = usernameField.getText().trim();
         String password = passwordField.getText();
 
-        // Validate input
         if (username.isEmpty() || password.isEmpty()) {
             UIUtil.showAlert(javafx.scene.control.Alert.AlertType.WARNING,
                     "Peringatan", "Username dan password harus diisi!");
@@ -129,27 +150,24 @@ public class RegisterView {
             return;
         }
 
-        // Check if user already exists
         if (SessionManager.isUserRegistered(username)) {
             UIUtil.showAlert(javafx.scene.control.Alert.AlertType.WARNING,
                     "Username Sudah Digunakan", "Silakan pilih username yang lain!");
             return;
         }
 
-        // Create new user
         User newUser = new User(username, password);
         boolean registerSuccess = SessionManager.registerUser(newUser);
 
         if (registerSuccess) {
-            // Clear fields
+
             usernameField.clear();
             passwordField.clear();
 
             UIUtil.showAlert(javafx.scene.control.Alert.AlertType.INFORMATION,
                     "Registrasi Berhasil", "Akun berhasil dibuat! Silakan login.");
 
-            // Navigate to login
-            sceneManager.showLoginView();
+            fadeTransition(() -> sceneManager.showLoginView());
         } else {
             UIUtil.showAlert(javafx.scene.control.Alert.AlertType.ERROR,
                     "Registrasi Gagal", "Terjadi kesalahan saat membuat akun!");

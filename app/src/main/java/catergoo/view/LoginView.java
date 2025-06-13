@@ -11,6 +11,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.Parent;
+import javafx.animation.FadeTransition;
+import javafx.util.Duration;
 
 public class LoginView {
     private SceneManager sceneManager;
@@ -24,17 +26,14 @@ public class LoginView {
     }
 
     private void initializeView() {
-        // Create background with food image
+
         StackPane background = UIUtil.createWelcomeBackground("/images/background/food-bg.jpg");
 
-        // Create login modal
-        VBox loginModal = UIUtil.createModal(450, 400);
+        VBox loginModal = UIUtil.createModal(450, 450);
 
-        // Title
         Label titleLabel = new Label("Masuk");
         titleLabel.setStyle("-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: black;");
 
-        // Username field
         VBox usernameContainer = new VBox(8);
         Label usernameLabel = new Label("Username");
         usernameLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
@@ -45,7 +44,6 @@ public class LoginView {
 
         usernameContainer.getChildren().addAll(usernameLabel, usernameField);
 
-        // Password field
         VBox passwordContainer = new VBox(8);
         Label passwordLabel = new Label("Kata Sandi");
         passwordLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
@@ -56,7 +54,6 @@ public class LoginView {
 
         passwordContainer.getChildren().addAll(passwordLabel, passwordField);
 
-        // Login button
         Button loginButton = new Button("Masuk");
         loginButton.setPrefSize(380, 50);
         loginButton.setStyle("-fx-background-color: " + UIUtil.PRIMARY_COLOR +
@@ -64,7 +61,6 @@ public class LoginView {
                 "; -fx-background-radius: 25; -fx-cursor: hand;");
         loginButton.setOnAction(e -> handleLogin());
 
-        // Register link
         HBox registerContainer = new HBox(5);
         registerContainer.setAlignment(Pos.CENTER);
 
@@ -74,28 +70,54 @@ public class LoginView {
         Label registerLink = new Label("Daftar");
         registerLink.setStyle("-fx-font-size: 14px; -fx-text-fill: " + UIUtil.BLUE_LINK +
                 "; -fx-cursor: hand; -fx-underline: true;");
-        registerLink.setOnMouseClicked(e -> sceneManager.showRegisterView());
+        registerLink.setOnMouseClicked(e -> {
+            fadeTransition(() -> sceneManager.showRegisterView());
+        });
 
         registerContainer.getChildren().addAll(registerPrompt, registerLink);
 
-        // Add all elements to modal
+        HBox navButtons = new HBox(10);
+        navButtons.setAlignment(Pos.CENTER);
+
+        Button backButton = new Button("Kembali");
+        backButton.setPrefSize(120, 35);
+        backButton.setStyle("-fx-background-color: " + UIUtil.LIGHT_GRAY +
+                "; -fx-text-fill: black; -fx-background-radius: 15;");
+        backButton.setOnAction(e -> {
+            fadeTransition(() -> sceneManager.showWelcomeView());
+        });
+
+        navButtons.getChildren().addAll(backButton);
+
         loginModal.getChildren().addAll(
                 titleLabel,
                 usernameContainer,
                 passwordContainer,
                 loginButton,
-                registerContainer);
+                registerContainer,
+                navButtons);
 
-        // Center the modal
         loginModal.setAlignment(Pos.CENTER);
 
-        // Create root with background and modal
         root = new StackPane();
         root.getChildren().addAll(background, loginModal);
         StackPane.setAlignment(loginModal, Pos.CENTER);
 
-        // Add enter key support
         passwordField.setOnAction(e -> handleLogin());
+
+        loginModal.setOpacity(0);
+        FadeTransition fadeIn = new FadeTransition(Duration.millis(500), loginModal);
+        fadeIn.setFromValue(0.0);
+        fadeIn.setToValue(1.0);
+        fadeIn.play();
+    }
+
+    private void fadeTransition(Runnable action) {
+        FadeTransition fadeOut = new FadeTransition(Duration.millis(300), root);
+        fadeOut.setFromValue(1.0);
+        fadeOut.setToValue(0.0);
+        fadeOut.setOnFinished(e -> action.run());
+        fadeOut.play();
     }
 
     private void handleLogin() {
@@ -111,12 +133,11 @@ public class LoginView {
         boolean loginSuccess = SessionManager.loginUser(username, password);
 
         if (loginSuccess) {
-            // Clear fields
+
             usernameField.clear();
             passwordField.clear();
 
-            // Navigate to home
-            sceneManager.showHomeView();
+            fadeTransition(() -> sceneManager.showHomeView());
         } else {
             UIUtil.showAlert(javafx.scene.control.Alert.AlertType.ERROR,
                     "Login Gagal", "Username atau password salah!");
