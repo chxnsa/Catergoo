@@ -4,10 +4,12 @@ import catergoo.view.component.NavigationBar;
 import catergoo.manager.SessionManager;
 import catergoo.model.Order;
 import catergoo.model.User;
+import catergoo.model.CartItem;
 import catergoo.util.DateUtil;
 import catergoo.util.UIUtil;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -16,7 +18,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.Parent;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import java.util.List;
 
 public class HistoryView {
@@ -91,7 +96,7 @@ public class HistoryView {
             emptyContainer.getChildren().addAll(emptyLabel, shopButton);
             ordersContainer.getChildren().add(emptyContainer);
         } else {
-
+            // Sort orders by date (newest first)
             orderHistory.sort((o1, o2) -> o2.getOrderDate().compareTo(o1.getOrderDate()));
 
             for (Order order : orderHistory) {
@@ -120,7 +125,7 @@ public class HistoryView {
         Label orderDateLabel = new Label("Tanggal: " + DateUtil.formatDateTime(order.getOrderDate()));
         orderDateLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: gray;");
 
-        Label orderTotalLabel = new Label("SubTotal: " + UIUtil.formatCurrency(order.getTotalAmount()));
+        Label orderTotalLabel = new Label("Total: " + UIUtil.formatCurrency(order.getTotalAmount()));
         orderTotalLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: gray;");
 
         orderInfo.getChildren().addAll(orderIdLabel, orderDateLabel, orderTotalLabel);
@@ -133,16 +138,23 @@ public class HistoryView {
         itemsPreview.setAlignment(Pos.CENTER_LEFT);
 
         if (!order.getItems().isEmpty()) {
+
+            CartItem firstOrderItem = order.getItems().get(0);
+
             ImageView firstItemImage = UIUtil.createImageView(
-                    order.getItems().get(0).getMenuItem().getImagePath(), 60, 60);
+                    firstOrderItem.getMenuItem().getImagePath(), 60, 60);
             if (firstItemImage.getImage() == null) {
                 firstItemImage = UIUtil.createImageView("/images/placeholder/food-placeholder.jpg", 60, 60);
             }
-            firstItemImage.setStyle("-fx-background-radius: 8;");
+
+            Rectangle clip = new Rectangle(60, 60);
+            clip.setArcWidth(12);
+            clip.setArcHeight(12);
+            firstItemImage.setClip(clip);
 
             VBox itemDetails = new VBox(3);
 
-            Label itemNameLabel = new Label(order.getItems().get(0).getMenuItem().getItemName());
+            Label itemNameLabel = new Label(firstOrderItem.getMenuItem().getItemName());
             itemNameLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
 
             String itemsText = order.getItems().size() == 1 ? "1 item" : order.getItems().size() + " items";
@@ -173,56 +185,126 @@ public class HistoryView {
 
     private void showOrderDetail(Order order) {
 
-        VBox detailContainer = new VBox(15);
-        detailContainer.setPadding(new Insets(20));
+        Stage detailStage = new Stage();
+        detailStage.initModality(Modality.APPLICATION_MODAL);
+        detailStage.initOwner(sceneManager.getPrimaryStage());
+        detailStage.setTitle("Detail Pesanan");
+        detailStage.setResizable(false);
+
+        VBox detailContainer = new VBox(20);
+        detailContainer.setPadding(new Insets(25));
         detailContainer.setStyle("-fx-background-color: white;");
+        detailContainer.setPrefWidth(600);
 
         Label titleLabel = new Label("Detail Pesanan " + order.getOrderId());
-        titleLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+        titleLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: " + UIUtil.PRIMARY_COLOR + ";");
 
-        Label statusLabel = new Label("Status: " + order.getStatus());
-        statusLabel.setStyle("-fx-font-size: 16px;");
+        VBox orderInfoSection = new VBox(8);
+
+        Label statusLabel = new Label("Status: ");
+        statusLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+        HBox statusContainer = new HBox(10);
+        statusContainer.setAlignment(Pos.CENTER_LEFT);
+        statusContainer.getChildren().addAll(statusLabel, UIUtil.createStatusBadge(order.getStatus()));
 
         Label dateLabel = new Label("Tanggal Pesanan: " + DateUtil.formatDateTime(order.getOrderDate()));
         dateLabel.setStyle("-fx-font-size: 14px;");
 
-        Label addressLabel = new Label("Alamat Pengiriman: " + order.getDeliveryAddress());
-        addressLabel.setStyle("-fx-font-size: 14px;");
-        addressLabel.setWrapText(true);
+        Label addressLabel = new Label("Alamat Pengiriman:");
+        addressLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
+
+        Label addressValueLabel = new Label(order.getDeliveryAddress());
+        addressValueLabel.setStyle("-fx-font-size: 14px;");
+        addressValueLabel.setWrapText(true);
 
         Label paymentLabel = new Label("Metode Pembayaran: " + order.getPaymentMethod());
         paymentLabel.setStyle("-fx-font-size: 14px;");
 
-        Label itemsHeaderLabel = new Label("Items Pesanan:");
+        orderInfoSection.getChildren().addAll(statusContainer, dateLabel, addressLabel, addressValueLabel,
+                paymentLabel);
+
+        Label itemsHeaderLabel = new Label("Item Pesanan:");
         itemsHeaderLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
 
+        ScrollPane itemsScrollPane = new ScrollPane();
+        itemsScrollPane.setFitToWidth(true);
+        itemsScrollPane.setPrefHeight(200);
+        itemsScrollPane.setStyle("-fx-background-color: transparent;");
+
         VBox itemsList = new VBox(10);
-        for (var item : order.getItems()) {
-            HBox itemRow = new HBox(10);
+        itemsList.setPadding(new Insets(10));
+
+        for (CartItem item : order.getItems()) {
+            HBox itemRow = new HBox(15);
             itemRow.setAlignment(Pos.CENTER_LEFT);
+            itemRow.setPadding(new Insets(10));
+            itemRow.setStyle("-fx-background-color: " + UIUtil.LIGHT_GRAY + "; -fx-background-radius: 8;");
 
-            Label itemLabel = new Label(item.getMenuItem().getItemName() +
-                    " (" + item.getQuantity() + " pax) - " +
-                    UIUtil.formatCurrency(item.getSubTotal()));
-            itemLabel.setStyle("-fx-font-size: 14px;");
+            ImageView itemImage = UIUtil.createImageView(item.getMenuItem().getImagePath(), 50, 50);
+            if (itemImage.getImage() == null) {
+                itemImage = UIUtil.createImageView("/images/placeholder/food-placeholder.jpg", 50, 50);
+            }
 
-            itemRow.getChildren().add(itemLabel);
+            Rectangle clip = new Rectangle(50, 50);
+            clip.setArcWidth(10);
+            clip.setArcHeight(10);
+            itemImage.setClip(clip);
+
+            VBox itemInfo = new VBox(3);
+            HBox.setHgrow(itemInfo, Priority.ALWAYS);
+
+            Label itemNameLabel = new Label(item.getMenuItem().getItemName());
+            itemNameLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
+
+            Label quantityLabel = new Label("Jumlah: " + item.getQuantity() + " pax");
+            quantityLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: gray;");
+
+            Label deliveryDateLabel = new Label("Tanggal: " + DateUtil.formatDate(item.getDeliveryDate()));
+            deliveryDateLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: gray;");
+
+            itemInfo.getChildren().addAll(itemNameLabel, quantityLabel, deliveryDateLabel);
+
+            Label priceLabel = new Label(UIUtil.formatCurrency(item.getSubTotal()));
+            priceLabel.setStyle(
+                    "-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: " + UIUtil.PRIMARY_COLOR + ";");
+
+            itemRow.getChildren().addAll(itemImage, itemInfo, priceLabel);
             itemsList.getChildren().add(itemRow);
         }
+
+        itemsScrollPane.setContent(itemsList);
+
+        HBox totalContainer = new HBox();
+        totalContainer.setAlignment(Pos.CENTER_RIGHT);
+        totalContainer.setPadding(new Insets(10, 0, 0, 0));
 
         Label totalLabel = new Label("Total: " + UIUtil.formatCurrency(order.getTotalAmount()));
         totalLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: " + UIUtil.PRIMARY_COLOR + ";");
 
+        totalContainer.getChildren().add(totalLabel);
+
+        Button closeButton = new Button("Tutup");
+        closeButton.setPrefSize(150, 40);
+        closeButton.setStyle("-fx-background-color: " + UIUtil.PRIMARY_COLOR +
+                "; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;" +
+                "; -fx-background-radius: 20; -fx-cursor: hand;");
+        closeButton.setOnAction(e -> detailStage.close());
+
+        HBox buttonContainer = new HBox();
+        buttonContainer.setAlignment(Pos.CENTER);
+        buttonContainer.getChildren().add(closeButton);
+
         detailContainer.getChildren().addAll(
-                titleLabel, statusLabel, dateLabel, addressLabel, paymentLabel,
-                itemsHeaderLabel, itemsList, totalLabel);
+                titleLabel,
+                orderInfoSection,
+                itemsHeaderLabel,
+                itemsScrollPane,
+                totalContainer,
+                buttonContainer);
 
-        ScrollPane scrollPane = new ScrollPane(detailContainer);
-        scrollPane.setFitToWidth(true);
-        scrollPane.setPrefSize(600, 500);
-
-        UIUtil.showAlert(javafx.scene.control.Alert.AlertType.INFORMATION,
-                "Detail Pesanan", detailContainer.toString());
+        Scene detailScene = new Scene(detailContainer);
+        detailStage.setScene(detailScene);
+        detailStage.showAndWait();
     }
 
     public void refreshView() {

@@ -26,7 +26,6 @@ public class PaymentView {
     private List<CartItem> cartItems;
     private double totalAmount;
 
-    // Form controls
     private ToggleGroup paymentTypeGroup;
     private ToggleGroup bankGroup;
     private TextArea addressArea;
@@ -53,31 +52,24 @@ public class PaymentView {
         this.cartItems = cartItems;
         this.totalAmount = cartItems.stream().mapToDouble(CartItem::getSubTotal).sum();
 
-        // Create main container
         VBox mainContainer = new VBox(20);
         mainContainer.setPadding(new Insets(25));
         mainContainer.setPrefSize(550, 700);
         mainContainer.setStyle("-fx-background-color: white;");
         mainContainer.setAlignment(Pos.TOP_CENTER);
 
-        // Title
         Label titleLabel = new Label("Pembayaran");
         titleLabel.setStyle("-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: " + UIUtil.PRIMARY_COLOR + ";");
 
-        // First HBox: Payment Type (Right) and Amount (Left)
         HBox firstHBox = createFirstHBox();
 
-        // Second HBox: Bank Selection (Right) and Details (Left)
         HBox secondHBox = createSecondHBox();
 
-        // Address section (below second HBox)
         VBox addressSection = createAddressSection();
 
-        // Upload section (below address)
         VBox uploadSection = createUploadSection();
 
-        // Action buttons (at bottom, vertical)
-        VBox buttonSection = createButtonSection();
+        HBox buttonSection = createButtonSection();
 
         mainContainer.getChildren().addAll(
                 titleLabel,
@@ -246,8 +238,8 @@ public class PaymentView {
         return section;
     }
 
-    private VBox createButtonSection() {
-        VBox buttonSection = new VBox(15);
+    private HBox createButtonSection() {
+        HBox buttonSection = new HBox(15);
         buttonSection.setAlignment(Pos.CENTER);
         buttonSection.setPrefWidth(500);
 
@@ -318,7 +310,7 @@ public class PaymentView {
     }
 
     private void handleConfirmOrder() {
-        // Validate input
+
         String address = addressArea.getText().trim();
 
         if (!ValidationUtil.isValidAddress(address)) {
@@ -333,11 +325,9 @@ public class PaymentView {
             return;
         }
 
-        // Get selected payment method
         RadioButton selectedBank = (RadioButton) bankGroup.getSelectedToggle();
         String paymentMethod = selectedBank != null ? selectedBank.getText() : "Bank BCA";
 
-        // Create order
         User currentUser = SessionManager.getCurrentUser();
         if (currentUser != null) {
             String orderId = DateUtil.generateOrderId();
@@ -351,10 +341,8 @@ public class PaymentView {
                     paymentMethod,
                     selectedProofFile.getAbsolutePath());
 
-            // Add to user's order history
             currentUser.addToHistory(order);
 
-            // Clear cart
             currentUser.clearCart();
 
             UIUtil.showAlert(Alert.AlertType.INFORMATION, "Pesanan Berhasil",

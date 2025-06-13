@@ -55,18 +55,14 @@ public class NotificationService implements Runnable {
     public void run() {
         while (isRunning && !Thread.currentThread().isInterrupted()) {
             try {
-
                 updateOrderStatuses();
-
                 Thread.sleep(UPDATE_INTERVAL);
-
             } catch (InterruptedException e) {
                 System.out.println("NotificationService interrupted");
                 Thread.currentThread().interrupt();
                 break;
             } catch (Exception e) {
                 System.err.println("Error in NotificationService: " + e.getMessage());
-
             }
         }
         isRunning = false;
@@ -94,7 +90,6 @@ public class NotificationService implements Runnable {
                 String newStatus = getNextStatus(order.getStatus());
 
                 if (!newStatus.equals(order.getStatus())) {
-
                     Platform.runLater(() -> {
                         order.setStatus(newStatus);
                         System.out.println("Order " + order.getOrderId() + " status updated to: " + newStatus);
@@ -105,28 +100,21 @@ public class NotificationService implements Runnable {
     }
 
     private boolean shouldUpdateOrderStatus(Order order) {
-
         if ("Selesai".equals(order.getStatus()) || "Dibatalkan".equals(order.getStatus())) {
             return false;
         }
 
         LocalDateTime orderTime = order.getOrderDate();
         LocalDateTime now = LocalDateTime.now();
-        long minutesSinceOrder = ChronoUnit.MINUTES.between(orderTime, now);
+        long secondsSinceOrder = ChronoUnit.SECONDS.between(orderTime, now);
 
         switch (order.getStatus()) {
             case "Menunggu Konfirmasi":
-
-                return minutesSinceOrder >= 2 && random.nextInt(100) < 30;
-
+                return secondsSinceOrder >= 60 && random.nextInt(100) < 40;
             case "Diproses":
-
-                return minutesSinceOrder >= 10 && random.nextInt(100) < 20;
-
+                return secondsSinceOrder >= 120 && random.nextInt(100) < 35;
             case "Sedang Dikirim":
-
-                return minutesSinceOrder >= 30 && random.nextInt(100) < 15;
-
+                return secondsSinceOrder >= 300 && random.nextInt(100) < 25;
             default:
                 return false;
         }
