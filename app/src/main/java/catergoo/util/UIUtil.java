@@ -491,7 +491,6 @@ public class UIUtil {
         Label label = new Label(text);
         label.setStyle("-fx-font-size: 14px;");
 
-        String fullText = text.replace(linkText, "");
         Label linkLabel = new Label(linkText);
         linkLabel.setStyle(
                 "-fx-font-size: 14px; -fx-text-fill: " + BLUE_LINK + "; -fx-cursor: hand; -fx-underline: true;");
