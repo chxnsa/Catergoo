@@ -23,8 +23,14 @@
 2. **Instalasi Dependensi** 📦:
    Pastikan Gradle terinstal, lalu jalankan:
 
+   **Windows (Command Prompt)**
    ```bash
-   gradle build
+   gradlew.bat build
+   ```
+
+   **Linux/macOS**
+   ```bash
+   ./gradlew build
    ```
 
    Perintah ini akan mengunduh semua dependensi, termasuk JavaFX dan pustaka pengujian.
