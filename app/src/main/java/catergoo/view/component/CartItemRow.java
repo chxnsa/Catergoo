@@ -15,7 +15,6 @@ import javafx.scene.layout.VBox;
 public class CartItemRow {
     private HBox row;
     private CartItem cartItem;
-    private Runnable onEditClick;
     private Runnable onDeleteClick;
 
     public CartItemRow(CartItem cartItem) {
@@ -36,19 +35,15 @@ public class CartItemRow {
         }
         itemImage.setStyle("-fx-background-radius: 8;");
 
-        // Item information
         VBox itemInfo = new VBox(5);
         HBox.setHgrow(itemInfo, Priority.ALWAYS);
 
-        // Item name
         Label nameLabel = new Label(cartItem.getMenuItem().getItemName());
         nameLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 16px;");
 
-        // Delivery date
         Label dateLabel = new Label("Tanggal: " + DateUtil.formatDate(cartItem.getDeliveryDate()));
         dateLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: gray;");
 
-        // Customizations
         if (cartItem.getCustomizations() != null && !cartItem.getCustomizations().isEmpty()) {
             Label customLabel = new Label("Kustom: " + cartItem.getCustomizations());
             customLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: gray;");
@@ -56,11 +51,9 @@ public class CartItemRow {
             itemInfo.getChildren().add(customLabel);
         }
 
-        // Quantity
         Label quantityLabel = new Label("Jumlah Porsi: " + cartItem.getQuantity() + " pax");
         quantityLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: gray;");
 
-        // Special notes
         if (cartItem.getSpecialNotes() != null && !cartItem.getSpecialNotes().isEmpty()) {
             Label notesLabel = new Label("Catatan: " + cartItem.getSpecialNotes());
             notesLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: gray;");
@@ -68,24 +61,14 @@ public class CartItemRow {
             itemInfo.getChildren().add(notesLabel);
         }
 
-        // Subtotal
         Label subtotalLabel = new Label(UIUtil.formatCurrency(cartItem.getSubTotal()));
         subtotalLabel
                 .setStyle("-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: " + UIUtil.PRIMARY_COLOR + ";");
 
         itemInfo.getChildren().addAll(nameLabel, dateLabel, quantityLabel, subtotalLabel);
 
-        // Action buttons
         VBox actionButtons = new VBox(5);
         actionButtons.setAlignment(Pos.CENTER_RIGHT);
-
-        Button editBtn = UIUtil.createButton("Edit", 80, "secondary-button");
-        editBtn.setStyle("-fx-background-color: " + UIUtil.SECONDARY_COLOR +
-                "; -fx-text-fill: " + UIUtil.ACCENT_COLOR + "; -fx-background-radius: 5;");
-        editBtn.setOnAction(e -> {
-            if (onEditClick != null)
-                onEditClick.run();
-        });
 
         Button deleteBtn = UIUtil.createButton("Hapus", 80, "secondary-button");
         deleteBtn.setStyle("-fx-background-color: " + UIUtil.ERROR_COLOR +
@@ -95,7 +78,7 @@ public class CartItemRow {
                 onDeleteClick.run();
         });
 
-        actionButtons.getChildren().addAll(editBtn, deleteBtn);
+        actionButtons.getChildren().addAll(deleteBtn);
 
         row.getChildren().addAll(itemImage, itemInfo, actionButtons);
     }
@@ -106,10 +89,6 @@ public class CartItemRow {
 
     public CartItem getCartItem() {
         return cartItem;
-    }
-
-    public void setOnEditClick(Runnable onEditClick) {
-        this.onEditClick = onEditClick;
     }
 
     public void setOnDeleteClick(Runnable onDeleteClick) {

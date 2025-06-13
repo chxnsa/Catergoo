@@ -28,29 +28,23 @@ public class MenuItemCard {
                         "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 2); " +
                         "-fx-cursor: hand;");
 
-        // Menu item image
         ImageView imageView = UIUtil.createImageView(menuItem.getImagePath(), cardWidth - 30, 150);
         if (imageView.getImage() == null) {
-            // Fallback image or placeholder
             imageView = UIUtil.createImageView("/images/placeholder/food-placeholder.jpg", cardWidth - 30, 150);
         }
         imageView.setStyle("-fx-background-radius: 8;");
 
-        // Item name
         Label nameLabel = new Label(menuItem.getItemName());
         nameLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: black;");
         nameLabel.setWrapText(true);
 
-        // Price and min order container
         HBox priceBox = new HBox();
         priceBox.setAlignment(Pos.CENTER_LEFT);
         priceBox.setSpacing(10);
 
-        // Price
         Label priceLabel = new Label(UIUtil.formatCurrency(menuItem.getPricePerPax()) + "/pax");
         priceLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: " + UIUtil.PRIMARY_COLOR + ";");
 
-        // Min order
         String minOrderText = "min order " + menuItem.getMinOrder() +
                 (menuItem.getClass().getSimpleName().equals("SnackPackage") ? "pcs" : "pax");
         Label minOrderLabel = new Label(minOrderText);
@@ -60,10 +54,8 @@ public class MenuItemCard {
 
         card.getChildren().addAll(imageView, nameLabel, priceBox);
 
-        // Add hover effect
         UIUtil.scaleOnHover(card);
 
-        // Add click handler
         card.setOnMouseClicked(e -> {
             if (onCardClick != null) {
                 onCardClick.run();

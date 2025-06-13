@@ -29,15 +29,12 @@ public class NavigationBar {
         navbar.setStyle("-fx-background-color: " + UIUtil.PRIMARY_COLOR + ";");
         navbar.setPrefHeight(60);
 
-        // Logo
         Label logo = new Label("Catergoo");
         logo.setStyle("-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;");
 
-        // Left spacer
         Region spacer1 = new Region();
         HBox.setHgrow(spacer1, Priority.ALWAYS);
 
-        // Navigation items
         HBox navItems = new HBox(40);
         navItems.setAlignment(Pos.CENTER);
 
@@ -61,11 +58,9 @@ public class NavigationBar {
 
         navItems.getChildren().addAll(homeNav, keranjangNav, riwayatNav);
 
-        // Right spacer
         Region spacer2 = new Region();
         HBox.setHgrow(spacer2, Priority.ALWAYS);
 
-        // Logout button
         Button logoutBtn = new Button("Logout");
         logoutBtn.setStyle(
                 "-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 16px; -fx-cursor: hand;" +
@@ -84,7 +79,6 @@ public class NavigationBar {
         String activeStyle = isActive ? " -fx-underline: true; -fx-font-weight: bold;" : "";
         navItem.setStyle(baseStyle + activeStyle);
 
-        // Hover effect
         navItem.setOnMouseEntered(e -> {
             if (!isActive) {
                 navItem.setStyle(baseStyle + " -fx-underline: true;");
@@ -102,7 +96,6 @@ public class NavigationBar {
         return navbar;
     }
 
-    // Setters for event handlers
     public void setOnHomeClick(Runnable onHomeClick) {
         this.onHomeClick = onHomeClick;
     }

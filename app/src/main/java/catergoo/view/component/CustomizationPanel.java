@@ -36,25 +36,22 @@ public class CustomizationPanel {
     }
 
     private void createFoodPackageCustomization(FoodPackage foodPackage) {
-        // Vegetable selection
+
         if (foodPackage.getVegetableOptions() != null && !foodPackage.getVegetableOptions().isEmpty()) {
             VBox vegContainer = createSelectionContainer("Pilih Sayur", foodPackage.getVegetableOptions());
             panel.getChildren().add(vegContainer);
         }
 
-        // Side dish selection
         if (foodPackage.getSideDishOptions() != null && !foodPackage.getSideDishOptions().isEmpty()) {
             VBox sideContainer = createSelectionContainer("Lauk Tambahan", foodPackage.getSideDishOptions());
             panel.getChildren().add(sideContainer);
         }
 
-        // Crackers option
         if (foodPackage.isIncludeCrackers()) {
             VBox crackersContainer = createCrackersSelection();
             panel.getChildren().add(crackersContainer);
         }
 
-        // Fruit selection
         if (foodPackage.getFruitOptions() != null && !foodPackage.getFruitOptions().isEmpty()) {
             VBox fruitContainer = createSelectionContainer("Pilih Buah", foodPackage.getFruitOptions());
             panel.getChildren().add(fruitContainer);
@@ -82,10 +79,9 @@ public class CustomizationPanel {
 
         ComboBox<String> comboBox = UIUtil.createComboBox();
         comboBox.getItems().addAll(options);
-        comboBox.setValue(options.get(0)); // Set default selection
+        comboBox.setValue(options.get(0));
         comboBox.setPrefWidth(350);
 
-        // Store the combobox for later retrieval
         comboBoxes.put(getKeyFromTitle(title), comboBox);
 
         container.getChildren().addAll(titleLabel, comboBox);
@@ -110,7 +106,6 @@ public class CustomizationPanel {
         HBox radioContainer = new HBox(20);
         radioContainer.getChildren().addAll(withCrackers, withoutCrackers);
 
-        // Store toggle group for later retrieval
         toggleGroups.put("crackers", crackersGroup);
 
         container.getChildren().addAll(titleLabel, radioContainer);
@@ -133,7 +128,6 @@ public class CustomizationPanel {
     public Map<String, String> getSelections() {
         Map<String, String> selections = new HashMap<>();
 
-        // Get combobox selections
         for (Map.Entry<String, ComboBox<String>> entry : comboBoxes.entrySet()) {
             String key = entry.getKey();
             ComboBox<String> comboBox = entry.getValue();
@@ -142,7 +136,6 @@ public class CustomizationPanel {
             }
         }
 
-        // Get toggle group selections
         for (Map.Entry<String, ToggleGroup> entry : toggleGroups.entrySet()) {
             String key = entry.getKey();
             ToggleGroup group = entry.getValue();
