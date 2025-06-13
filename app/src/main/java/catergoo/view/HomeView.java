@@ -75,7 +75,8 @@ public class HomeView {
 
         filterButtons = new ArrayList<>();
 
-        String[] filters = { "Semua", "Nasi Kotak", "Kotak Snack", "Paket" };
+        // Removed "Paket" category as requested
+        String[] filters = { "Semua", "Nasi Kotak", "Kotak Snack" };
 
         for (String filter : filters) {
             Button filterBtn = UIUtil.createFilterButton(filter, filter.equals(currentFilter));
