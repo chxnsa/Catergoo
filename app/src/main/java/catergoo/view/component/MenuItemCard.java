@@ -34,9 +34,8 @@ public class MenuItemCard {
             imageView = UIUtil.createImageView("/images/placeholder/food-placeholder.jpg", cardWidth - 30, 150);
         }
 
-        // Create rounded corners for image
         Rectangle clip = new Rectangle(cardWidth - 30, 150);
-        clip.setArcWidth(16); // Rounded corners
+        clip.setArcWidth(16);
         clip.setArcHeight(16);
         imageView.setClip(clip);
 

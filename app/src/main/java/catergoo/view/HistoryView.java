@@ -137,14 +137,12 @@ public class HistoryView {
         HBox itemsPreview = new HBox(10);
         itemsPreview.setAlignment(Pos.CENTER_LEFT);
 
-        // Debug: Print order items count
         System.out.println("Order " + order.getOrderId() + " has " + order.getItems().size() + " items");
 
         if (order.getItems() != null && !order.getItems().isEmpty()) {
-            // Get the first item from THIS specific order
+
             CartItem firstOrderItem = order.getItems().get(0);
 
-            // Debug: Print item details
             System.out.println("First item: " + firstOrderItem.getMenuItem().getItemName());
 
             ImageView firstItemImage = UIUtil.createImageView(
@@ -153,7 +151,6 @@ public class HistoryView {
                 firstItemImage = UIUtil.createImageView("/images/placeholder/food-placeholder.jpg", 60, 60);
             }
 
-            // Add rounded corners to image
             Rectangle clip = new Rectangle(60, 60);
             clip.setArcWidth(12);
             clip.setArcHeight(12);
@@ -178,7 +175,6 @@ public class HistoryView {
 
             itemsPreview.getChildren().addAll(firstItemImage, itemDetails);
         } else {
-            // Fallback if no items found
             Label noItemsLabel = new Label("Tidak ada item ditemukan");
             noItemsLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: gray;");
             itemsPreview.getChildren().add(noItemsLabel);
@@ -202,7 +198,6 @@ public class HistoryView {
     }
 
     private void showOrderDetail(Order order) {
-        // Create modal stage for detail view
         Stage detailStage = new Stage();
         detailStage.initModality(Modality.APPLICATION_MODAL);
         detailStage.initOwner(sceneManager.getPrimaryStage());
@@ -214,11 +209,9 @@ public class HistoryView {
         detailContainer.setStyle("-fx-background-color: white;");
         detailContainer.setPrefWidth(600);
 
-        // Header
         Label titleLabel = new Label("Detail Pesanan " + order.getOrderId());
         titleLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: " + UIUtil.PRIMARY_COLOR + ";");
 
-        // Order info
         VBox orderInfoSection = new VBox(8);
 
         Label statusLabel = new Label("Status: ");
@@ -313,7 +306,6 @@ public class HistoryView {
 
         itemsScrollPane.setContent(itemsList);
 
-        // Total
         HBox totalContainer = new HBox();
         totalContainer.setAlignment(Pos.CENTER_RIGHT);
         totalContainer.setPadding(new Insets(10, 0, 0, 0));
@@ -323,7 +315,6 @@ public class HistoryView {
 
         totalContainer.getChildren().add(totalLabel);
 
-        // Close button
         Button closeButton = new Button("Tutup");
         closeButton.setPrefSize(150, 40);
         closeButton.setStyle("-fx-background-color: " + UIUtil.PRIMARY_COLOR +

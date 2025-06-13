@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 public class CartItem {
   private MenuItem menuItem;
-  private int quantity; // Fixed: Changed from double to int
+  private int quantity;
   private LocalDate deliveryDate;
   private String specialNotes;
   private String customizations;

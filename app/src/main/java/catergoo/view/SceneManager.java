@@ -13,8 +13,8 @@ public class SceneManager {
 
     private static final double DEFAULT_WIDTH = 1200;
     private static final double DEFAULT_HEIGHT = 800;
-    private static final double WELCOME_WIDTH = 1400;
-    private static final double WELCOME_HEIGHT = 900;
+    private static final double MIN_WIDTH = 800;
+    private static final double MIN_HEIGHT = 600;
 
     private WelcomeView welcomeView;
     private LoginView loginView;
@@ -37,47 +37,46 @@ public class SceneManager {
     public static void setPrimaryStage(Stage stage) {
         primaryStage = stage;
 
-        primaryStage.setMinWidth(1000);
-        primaryStage.setMinHeight(700);
+        primaryStage.setMinWidth(MIN_WIDTH);
+        primaryStage.setMinHeight(MIN_HEIGHT);
         primaryStage.setResizable(true);
     }
 
     public void showWelcomeView() {
         welcomeView = new WelcomeView(this);
-        Scene scene = new Scene(welcomeView.getView(), WELCOME_WIDTH, WELCOME_HEIGHT);
+        Scene scene = new Scene(welcomeView.getView(), DEFAULT_WIDTH, DEFAULT_HEIGHT);
         scene.getStylesheets().add(getClass().getResource("/styles/application.css").toExternalForm());
-        primaryStage.setScene(scene);
-        primaryStage.setTitle("Catergoo - Welcome");
 
-        primaryStage.setResizable(false);
-        primaryStage.setWidth(WELCOME_WIDTH);
-        primaryStage.setHeight(WELCOME_HEIGHT);
-        primaryStage.centerOnScreen();
-        primaryStage.show();
+        Platform.runLater(() -> {
+            primaryStage.setScene(scene);
+            primaryStage.setTitle("Catergoo - Welcome");
+            primaryStage.setWidth(DEFAULT_WIDTH);
+            primaryStage.setHeight(DEFAULT_HEIGHT);
+            primaryStage.centerOnScreen();
+            primaryStage.show();
+        });
     }
 
     public void showLoginView() {
         loginView = new LoginView(this);
-        Scene scene = new Scene(loginView.getView(), WELCOME_WIDTH, WELCOME_HEIGHT);
+        Scene scene = new Scene(loginView.getView(), DEFAULT_WIDTH, DEFAULT_HEIGHT);
         scene.getStylesheets().add(getClass().getResource("/styles/application.css").toExternalForm());
 
         Platform.runLater(() -> {
             primaryStage.setScene(scene);
             primaryStage.setTitle("Catergoo - Masuk");
-            primaryStage.setResizable(false);
             primaryStage.centerOnScreen();
         });
     }
 
     public void showRegisterView() {
         registerView = new RegisterView(this);
-        Scene scene = new Scene(registerView.getView(), WELCOME_WIDTH, WELCOME_HEIGHT);
+        Scene scene = new Scene(registerView.getView(), DEFAULT_WIDTH, DEFAULT_HEIGHT);
         scene.getStylesheets().add(getClass().getResource("/styles/application.css").toExternalForm());
 
         Platform.runLater(() -> {
             primaryStage.setScene(scene);
             primaryStage.setTitle("Catergoo - Daftar");
-            primaryStage.setResizable(false);
             primaryStage.centerOnScreen();
         });
     }
@@ -95,8 +94,6 @@ public class SceneManager {
         Platform.runLater(() -> {
             primaryStage.setScene(scene);
             primaryStage.setTitle("Catergoo - Home");
-
-            primaryStage.setResizable(true);
             primaryStage.setWidth(DEFAULT_WIDTH);
             primaryStage.setHeight(DEFAULT_HEIGHT);
             primaryStage.centerOnScreen();
@@ -113,7 +110,6 @@ public class SceneManager {
         Platform.runLater(() -> {
             primaryStage.setScene(scene);
             primaryStage.setTitle("Catergoo - Keranjang");
-            primaryStage.setResizable(true);
         });
 
         cartView.refreshView();
@@ -127,7 +123,6 @@ public class SceneManager {
         Platform.runLater(() -> {
             primaryStage.setScene(scene);
             primaryStage.setTitle("Catergoo - Riwayat");
-            primaryStage.setResizable(true);
         });
 
         historyView.refreshView();

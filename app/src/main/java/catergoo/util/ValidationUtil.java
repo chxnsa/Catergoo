@@ -3,7 +3,7 @@ package catergoo.util;
 import java.util.regex.Pattern;
 
 public class ValidationUtil {
-    // constants
+
     private static final int MIN_USERNAME_LENGTH = 5;
     private static final int MIN_PASSWORD_LENGTH = 8;
     private static final int MIN_DIGIT_COUNT = 3;

@@ -143,22 +143,18 @@ public class MenuManager {
         }
     }
 
-    // Get total menu items count
     public static int getTotalMenuItems() {
         return defaultMenuItems.size();
     }
 
-    // Check if menu is initialized
     public static boolean isMenuInitialized() {
         return !defaultMenuItems.isEmpty();
     }
 
-    // Clear menu (untuk testing)
     public static void clearMenu() {
         defaultMenuItems.clear();
     }
 
-    // Get customizable menu items
     public static List<MenuItem> getCustomizableMenuItems() {
         List<MenuItem> customizable = new ArrayList<>();
         for (MenuItem item : defaultMenuItems) {
@@ -169,7 +165,6 @@ public class MenuManager {
         return customizable;
     }
 
-    // Get non-customizable menu items
     public static List<MenuItem> getNonCustomizableMenuItems() {
         List<MenuItem> nonCustomizable = new ArrayList<>();
         for (MenuItem item : defaultMenuItems) {

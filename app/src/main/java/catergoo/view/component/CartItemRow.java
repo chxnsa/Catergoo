@@ -46,7 +46,6 @@ public class CartItemRow {
         Label nameLabel = new Label(cartItem.getMenuItem().getItemName());
         nameLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 16px;");
 
-        // Move customization info and notes right below the name
         if (cartItem.getCustomizations() != null && !cartItem.getCustomizations().isEmpty()) {
             Label customLabel = new Label("Kustom: " + cartItem.getCustomizations());
             customLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: gray;");

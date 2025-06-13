@@ -531,17 +531,143 @@ public class UIUtil {
 
         ImageView backgroundImage = new ImageView();
         Image image = loadImage(imagePath);
+
         if (image != null) {
             backgroundImage.setImage(image);
-            backgroundImage.setPreserveRatio(false);
+            backgroundImage.setPreserveRatio(true);
+
+            backgroundImage.setSmooth(true);
+            backgroundImage.setCache(true);
+
+            background.widthProperty().addListener((obs, oldVal, newVal) -> {
+                updateBackgroundImageSize(backgroundImage, newVal.doubleValue(), background.getHeight());
+            });
+
+            background.heightProperty().addListener((obs, oldVal, newVal) -> {
+                updateBackgroundImageSize(backgroundImage, background.getWidth(), newVal.doubleValue());
+            });
+
             backgroundImage.setFitWidth(1200);
             backgroundImage.setFitHeight(800);
         }
 
         Region overlay = new Region();
-        overlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.6);");
+        overlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.3);");
 
         background.getChildren().addAll(backgroundImage, overlay);
+
+        background.setStyle("-fx-background-color: #2c3e50;");
+
+        return background;
+    }
+
+    private static void updateBackgroundImageSize(ImageView imageView, double containerWidth, double containerHeight) {
+        if (imageView.getImage() == null || containerWidth <= 0 || containerHeight <= 0) {
+            return;
+        }
+
+        Image image = imageView.getImage();
+        double imageWidth = image.getWidth();
+        double imageHeight = image.getHeight();
+
+        double scaleX = containerWidth / imageWidth;
+        double scaleY = containerHeight / imageHeight;
+
+        double scale = Math.max(scaleX, scaleY);
+
+        imageView.setFitWidth(imageWidth * scale);
+        imageView.setFitHeight(imageHeight * scale);
+    }
+
+    public static StackPane createAdaptiveWelcomeBackground(String imagePath) {
+        StackPane background = new StackPane();
+
+        ImageView backgroundImage = new ImageView();
+        Image image = loadImage(imagePath);
+
+        if (image != null) {
+            backgroundImage.setImage(image);
+            backgroundImage.setPreserveRatio(false);
+            backgroundImage.setSmooth(true);
+            backgroundImage.setCache(true);
+
+            background.needsLayoutProperty().addListener((obs, wasNeeded, isNeeded) -> {
+                if (!isNeeded) {
+                    updateAdaptiveBackground(backgroundImage, background.getWidth(), background.getHeight());
+                }
+            });
+
+            backgroundImage.fitWidthProperty().bind(background.widthProperty());
+            backgroundImage.fitHeightProperty().bind(background.heightProperty());
+
+            background.layoutBoundsProperty().addListener((obs, oldBounds, newBounds) -> {
+                updateAdaptiveBackground(backgroundImage, newBounds.getWidth(), newBounds.getHeight());
+            });
+        }
+
+        Region overlay = new Region();
+        overlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.4);");
+
+        background.getChildren().addAll(backgroundImage, overlay);
+        background.setStyle("-fx-background-color: #34495e;");
+
+        return background;
+    }
+
+    private static void updateAdaptiveBackground(ImageView imageView, double containerWidth, double containerHeight) {
+        if (imageView.getImage() == null || containerWidth <= 0 || containerHeight <= 0) {
+            return;
+        }
+
+        Image image = imageView.getImage();
+        double originalWidth = image.getWidth();
+        double originalHeight = image.getHeight();
+        double originalRatio = originalWidth / originalHeight;
+        double containerRatio = containerWidth / containerHeight;
+
+        double newWidth, newHeight;
+
+        if (originalRatio > containerRatio) {
+
+            newHeight = containerHeight;
+            newWidth = newHeight * originalRatio;
+        } else {
+
+            newWidth = containerWidth;
+            newHeight = newWidth / originalRatio;
+        }
+
+        imageView.setFitWidth(newWidth);
+        imageView.setFitHeight(newHeight);
+
+        imageView.setTranslateX((containerWidth - newWidth) / 2);
+        imageView.setTranslateY((containerHeight - newHeight) / 2);
+    }
+
+    public static StackPane createResponsiveWelcomeBackground(String imagePath) {
+        StackPane background = new StackPane();
+
+        ImageView backgroundImage = new ImageView();
+        Image image = loadImage(imagePath);
+
+        if (image != null) {
+            backgroundImage.setImage(image);
+
+            backgroundImage.setPreserveRatio(true);
+            backgroundImage.setSmooth(true);
+            backgroundImage.setCache(true);
+
+            backgroundImage.fitWidthProperty().bind(background.widthProperty().multiply(1.2));
+            backgroundImage.fitHeightProperty().bind(background.heightProperty().multiply(1.2));
+
+        }
+
+        Region overlay = new Region();
+        overlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.35);");
+
+        background.getChildren().addAll(backgroundImage, overlay);
+        background.setStyle("-fx-background-color: #2c3e50;");
+
         return background;
     }
 }

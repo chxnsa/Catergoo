@@ -8,6 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.Parent;
 import javafx.animation.FadeTransition;
 import javafx.util.Duration;
@@ -24,6 +25,42 @@ public class WelcomeView {
     private void initializeView() {
 
         StackPane background = UIUtil.createWelcomeBackground("/images/background/food-bg.jpg");
+
+        BorderPane mainLayout = new BorderPane();
+
+        HBox topBar = new HBox();
+        topBar.setPadding(new Insets(20, 20, 0, 0));
+        topBar.setAlignment(Pos.CENTER_RIGHT);
+
+        Button exitButton = new Button("✕");
+        exitButton.setPrefSize(40, 40);
+        exitButton.setStyle("-fx-background-color: rgba(244, 67, 54, 0.8); -fx-text-fill: white;" +
+                "; -fx-font-size: 18px; -fx-font-weight: bold;" +
+                "; -fx-background-radius: 20; -fx-cursor: hand;" +
+                "; -fx-border-radius: 20;");
+        exitButton.setOnAction(e -> {
+            boolean confirm = UIUtil.showConfirmation("Keluar Aplikasi",
+                    "Apakah Anda yakin ingin keluar dari aplikasi?");
+            if (confirm) {
+                sceneManager.exitApplication();
+            }
+        });
+
+        exitButton.setOnMouseEntered(e -> {
+            exitButton.setStyle("-fx-background-color: rgba(198, 40, 40, 0.9); -fx-text-fill: white;" +
+                    "; -fx-font-size: 18px; -fx-font-weight: bold;" +
+                    "; -fx-background-radius: 20; -fx-cursor: hand;" +
+                    "; -fx-border-radius: 20;");
+        });
+
+        exitButton.setOnMouseExited(e -> {
+            exitButton.setStyle("-fx-background-color: rgba(244, 67, 54, 0.8); -fx-text-fill: white;" +
+                    "; -fx-font-size: 18px; -fx-font-weight: bold;" +
+                    "; -fx-background-radius: 20; -fx-cursor: hand;" +
+                    "; -fx-border-radius: 20;");
+        });
+
+        topBar.getChildren().add(exitButton);
 
         VBox content = new VBox(10);
         content.setAlignment(Pos.CENTER_LEFT);
@@ -61,7 +98,6 @@ public class WelcomeView {
                 "; -fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;" +
                 "; -fx-background-radius: 25; -fx-cursor: hand;");
         loginButton.setOnAction(e -> {
-
             fadeTransition(() -> sceneManager.showLoginView());
         });
 
@@ -72,24 +108,10 @@ public class WelcomeView {
                 "; -fx-border-width: 2; -fx-background-radius: 25; -fx-border-radius: 25;" +
                 "; -fx-cursor: hand;");
         registerButton.setOnAction(e -> {
-
             fadeTransition(() -> sceneManager.showRegisterView());
         });
 
-        Button exitButton = new Button("Keluar");
-        exitButton.setPrefSize(200, 50);
-        exitButton.setStyle("-fx-background-color: rgba(244, 67, 54, 0.8); -fx-text-fill: white;" +
-                "; -fx-font-size: 14px; -fx-font-weight: bold;" +
-                "; -fx-background-radius: 20; -fx-cursor: hand;");
-        exitButton.setOnAction(e -> {
-            boolean confirm = UIUtil.showConfirmation("Keluar Aplikasi",
-                    "Apakah Anda yakin ingin keluar dari aplikasi?");
-            if (confirm) {
-                sceneManager.exitApplication();
-            }
-        });
-
-        buttonContainer.getChildren().addAll(loginButton, registerButton, exitButton);
+        buttonContainer.getChildren().addAll(loginButton, registerButton);
 
         content.getChildren().addAll(
                 welcomeTitle,
@@ -100,12 +122,14 @@ public class WelcomeView {
         welcomeContent.setAlignment(Pos.CENTER);
         welcomeContent.getChildren().addAll(content, buttonContainer);
 
-        root = new StackPane();
-        root.getChildren().addAll(background, welcomeContent);
-        StackPane.setAlignment(welcomeContent, Pos.CENTER);
+        mainLayout.setTop(topBar);
+        mainLayout.setCenter(welcomeContent);
 
-        welcomeContent.setOpacity(0);
-        FadeTransition fadeIn = new FadeTransition(Duration.millis(800), welcomeContent);
+        root = new StackPane();
+        root.getChildren().addAll(background, mainLayout);
+
+        mainLayout.setOpacity(0);
+        FadeTransition fadeIn = new FadeTransition(Duration.millis(800), mainLayout);
         fadeIn.setFromValue(0.0);
         fadeIn.setToValue(1.0);
         fadeIn.play();
