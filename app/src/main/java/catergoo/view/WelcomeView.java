@@ -32,7 +32,7 @@ public class WelcomeView {
         topBar.setPadding(new Insets(20, 20, 0, 0));
         topBar.setAlignment(Pos.CENTER_RIGHT);
 
-        Button exitButton = new Button("✕");
+        Button exitButton = new Button("X");
         exitButton.setPrefSize(40, 40);
         exitButton.setStyle("-fx-background-color: rgba(244, 67, 54, 0.8); -fx-text-fill: white;" +
                 "; -fx-font-size: 18px; -fx-font-weight: bold;" +

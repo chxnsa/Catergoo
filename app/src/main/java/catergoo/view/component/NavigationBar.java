@@ -5,6 +5,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -29,8 +30,25 @@ public class NavigationBar {
         navbar.setStyle("-fx-background-color: " + UIUtil.PRIMARY_COLOR + ";");
         navbar.setPrefHeight(60);
 
-        Label logo = new Label("Catergoo");
-        logo.setStyle("-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;");
+        // Create logo container for better positioning
+        HBox logoContainer = new HBox();
+        logoContainer.setAlignment(Pos.CENTER_LEFT);
+
+        // Try to load logo image
+        ImageView logoImage = UIUtil.createImageView("/images/logo/catergoo-logo.png", 240, 60);
+
+        if (logoImage.getImage() != null) {
+            // Logo loaded successfully
+            logoImage.setPreserveRatio(true);
+            logoImage.setSmooth(true);
+            logoImage.setCache(true);
+            logoContainer.getChildren().add(logoImage);
+        } else {
+            // Fallback to text logo if image not found
+            Label logoText = new Label("Catergoo");
+            logoText.setStyle("-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;");
+            logoContainer.getChildren().add(logoText);
+        }
 
         Region spacer1 = new Region();
         HBox.setHgrow(spacer1, Priority.ALWAYS);
@@ -70,7 +88,8 @@ public class NavigationBar {
                 onLogoutClick.run();
         });
 
-        navbar.getChildren().addAll(logo, spacer1, navItems, spacer2, logoutBtn);
+        // Add all elements to navbar
+        navbar.getChildren().addAll(logoContainer, spacer1, navItems, spacer2, logoutBtn);
     }
 
     private Label createNavItem(String text, boolean isActive) {

@@ -34,7 +34,7 @@ public class HomeView {
 
     private void initializeView() {
         root = new BorderPane();
-        root.setStyle("-fx-background-color: " + UIUtil.LIGHT_GRAY + ";");
+        root.setStyle("-fx-background-color: " + UIUtil.WHITE_COLOR + ";");
 
         NavigationBar navbar = new NavigationBar("Home");
         navbar.setOnHomeClick(() -> sceneManager.showHomeView());
