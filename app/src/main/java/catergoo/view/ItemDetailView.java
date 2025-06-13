@@ -13,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import java.time.LocalDate;
@@ -51,7 +52,6 @@ public class ItemDetailView {
         mainContainer.setStyle("-fx-background-color: white;");
 
         VBox leftSide = createLeftSide();
-
         VBox rightSide = createRightSide();
 
         mainContainer.getChildren().addAll(leftSide, rightSide);
@@ -62,14 +62,18 @@ public class ItemDetailView {
     }
 
     private VBox createLeftSide() {
-        VBox leftSide = new VBox(20);
+        VBox leftSide = new VBox(15);
         leftSide.setPrefWidth(400);
 
         ImageView imageView = UIUtil.createImageView(currentMenuItem.getImagePath(), 350, 200);
         if (imageView.getImage() == null) {
             imageView = UIUtil.createImageView("/images/placeholder/food-placeholder.jpg", 350, 200);
         }
-        imageView.setStyle("-fx-background-radius: 10;");
+
+        Rectangle clip = new Rectangle(350, 200);
+        clip.setArcWidth(20);
+        clip.setArcHeight(20);
+        imageView.setClip(clip);
 
         Label nameLabel = new Label(currentMenuItem.getItemName());
         nameLabel.setStyle("-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: " + UIUtil.PRIMARY_COLOR + ";");
@@ -163,6 +167,7 @@ public class ItemDetailView {
         addToCartBtn.setStyle("-fx-background-color: " + UIUtil.PRIMARY_COLOR +
                 "; -fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;" +
                 "; -fx-background-radius: 25; -fx-cursor: hand;");
+
         addToCartBtn.setOnAction(e -> handleAddToCart());
 
         rightSide.getChildren().addAll(

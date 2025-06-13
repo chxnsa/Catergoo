@@ -11,6 +11,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Rectangle;
 
 public class CartItemRow {
     private HBox row;
@@ -33,7 +34,12 @@ public class CartItemRow {
         if (itemImage.getImage() == null) {
             itemImage = UIUtil.createImageView("/images/placeholder/food-placeholder.jpg", 80, 80);
         }
-        itemImage.setStyle("-fx-background-radius: 8;");
+
+        // Create rounded corners for image
+        Rectangle clip = new Rectangle(80, 80);
+        clip.setArcWidth(16); // Rounded corners
+        clip.setArcHeight(16);
+        itemImage.setClip(clip);
 
         VBox itemInfo = new VBox(5);
         HBox.setHgrow(itemInfo, Priority.ALWAYS);
@@ -41,9 +47,7 @@ public class CartItemRow {
         Label nameLabel = new Label(cartItem.getMenuItem().getItemName());
         nameLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 16px;");
 
-        Label dateLabel = new Label("Tanggal: " + DateUtil.formatDate(cartItem.getDeliveryDate()));
-        dateLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: gray;");
-
+        // Move customization info and notes right below the name
         if (cartItem.getCustomizations() != null && !cartItem.getCustomizations().isEmpty()) {
             Label customLabel = new Label("Kustom: " + cartItem.getCustomizations());
             customLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: gray;");
@@ -51,15 +55,18 @@ public class CartItemRow {
             itemInfo.getChildren().add(customLabel);
         }
 
-        Label quantityLabel = new Label("Jumlah Porsi: " + cartItem.getQuantity() + " pax");
-        quantityLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: gray;");
-
         if (cartItem.getSpecialNotes() != null && !cartItem.getSpecialNotes().isEmpty()) {
             Label notesLabel = new Label("Catatan: " + cartItem.getSpecialNotes());
             notesLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: gray;");
             notesLabel.setWrapText(true);
             itemInfo.getChildren().add(notesLabel);
         }
+
+        Label dateLabel = new Label("Tanggal: " + DateUtil.formatDate(cartItem.getDeliveryDate()));
+        dateLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: gray;");
+
+        Label quantityLabel = new Label("Jumlah Porsi: " + cartItem.getQuantity() + " pax");
+        quantityLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: gray;");
 
         Label subtotalLabel = new Label(UIUtil.formatCurrency(cartItem.getSubTotal()));
         subtotalLabel

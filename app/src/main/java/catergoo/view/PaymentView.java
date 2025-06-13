@@ -11,6 +11,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
@@ -52,10 +53,10 @@ public class PaymentView {
         this.cartItems = cartItems;
         this.totalAmount = cartItems.stream().mapToDouble(CartItem::getSubTotal).sum();
 
-        // Create main container - more compact and vertical
-        VBox mainContainer = new VBox(15);
-        mainContainer.setPadding(new Insets(20));
-        mainContainer.setPrefSize(450, 600); // Even more compact
+        // Create main container
+        VBox mainContainer = new VBox(20);
+        mainContainer.setPadding(new Insets(25));
+        mainContainer.setPrefSize(550, 700);
         mainContainer.setStyle("-fx-background-color: white;");
         mainContainer.setAlignment(Pos.TOP_CENTER);
 
@@ -63,29 +64,25 @@ public class PaymentView {
         Label titleLabel = new Label("Pembayaran");
         titleLabel.setStyle("-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: " + UIUtil.PRIMARY_COLOR + ";");
 
-        // Payment type section
-        VBox paymentTypeSection = createPaymentTypeSection();
+        // First HBox: Payment Type (Right) and Amount (Left)
+        HBox firstHBox = createFirstHBox();
 
-        // Bank selection section
-        VBox bankSection = createBankSection();
+        // Second HBox: Bank Selection (Right) and Details (Left)
+        HBox secondHBox = createSecondHBox();
 
-        // Payment details section (more compact)
-        VBox paymentDetailsSection = createPaymentDetailsSection();
-
-        // Address section
+        // Address section (below second HBox)
         VBox addressSection = createAddressSection();
 
-        // Upload section
+        // Upload section (below address)
         VBox uploadSection = createUploadSection();
 
-        // Action buttons
+        // Action buttons (at bottom, vertical)
         VBox buttonSection = createButtonSection();
 
         mainContainer.getChildren().addAll(
                 titleLabel,
-                paymentTypeSection,
-                bankSection,
-                paymentDetailsSection,
+                firstHBox,
+                secondHBox,
                 addressSection,
                 uploadSection,
                 buttonSection);
@@ -95,8 +92,29 @@ public class PaymentView {
         modalStage.showAndWait();
     }
 
-    private VBox createPaymentTypeSection() {
-        VBox section = new VBox(8);
+    private HBox createFirstHBox() {
+        HBox firstHBox = new HBox(20);
+        firstHBox.setAlignment(Pos.CENTER);
+        firstHBox.setPrefWidth(500);
+
+        // Left side: Payment Amount
+        VBox leftSide = new VBox(5);
+        leftSide.setAlignment(Pos.CENTER);
+        leftSide.setPrefWidth(250);
+
+        Label amountTextLabel = new Label("Nominal Pembayaran");
+        amountTextLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #666;");
+
+        paymentAmountLabel = new Label(UIUtil.formatCurrency(totalAmount));
+        paymentAmountLabel
+                .setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: " + UIUtil.PRIMARY_COLOR + ";");
+
+        leftSide.getChildren().addAll(amountTextLabel, paymentAmountLabel);
+
+        // Right side: Payment Type Selection
+        VBox rightSide = new VBox(8);
+        rightSide.setAlignment(Pos.CENTER_LEFT);
+        rightSide.setPrefWidth(250);
 
         paymentTypeGroup = new ToggleGroup();
 
@@ -109,15 +127,64 @@ public class PaymentView {
         dpPayment.setToggleGroup(paymentTypeGroup);
         dpPayment.setOnAction(e -> updatePaymentAmount());
 
-        section.getChildren().addAll(fullPayment, dpPayment);
-        return section;
+        rightSide.getChildren().addAll(fullPayment, dpPayment);
+
+        firstHBox.getChildren().addAll(leftSide, rightSide);
+        return firstHBox;
     }
 
-    private VBox createBankSection() {
-        VBox section = new VBox(12);
+    private HBox createSecondHBox() {
+        HBox secondHBox = new HBox(20);
+        secondHBox.setAlignment(Pos.TOP_CENTER);
+        secondHBox.setPrefWidth(500);
+
+        // Left side: Account Details & Instructions
+        VBox leftSide = new VBox(10);
+        leftSide.setAlignment(Pos.CENTER);
+        leftSide.setPrefWidth(250);
+
+        Label accountTextLabel = new Label("Rekening Tujuan");
+        accountTextLabel.setStyle("-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #666;");
+
+        accountNumberLabel = new Label("BCA 098123765341");
+        accountNumberLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+
+        // Instructions
+        Label instructionsLabel = new Label("Tata Cara Pembayaran");
+        instructionsLabel.setStyle("-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #666;");
+
+        VBox instructionsContainer = new VBox(3);
+        instructionsContainer.setPadding(new Insets(8));
+        instructionsContainer.setStyle("-fx-background-color: " + UIUtil.LIGHT_GRAY + "; -fx-background-radius: 5;");
+        instructionsContainer.setPrefWidth(240);
+
+        Label instruction1 = new Label("1. Transfer ke rekening tujuan");
+        instruction1.setStyle("-fx-font-size: 10px; -fx-font-weight: bold;");
+
+        Label instruction2 = new Label("2. Sesuaikan nominal dengan tagihan");
+        instruction2.setStyle("-fx-font-size: 10px; -fx-font-weight: bold;");
+
+        Label instruction3 = new Label("3. Simpan bukti pembayaran");
+        instruction3.setStyle("-fx-font-size: 10px; -fx-font-weight: bold;");
+
+        Label instruction4 = new Label("4. Upload bukti di form ini");
+        instruction4.setStyle("-fx-font-size: 10px; -fx-font-weight: bold;");
+
+        Label finalNote = new Label("Konfirmasi maksimal 1x24 jam setelah pembayaran.");
+        finalNote.setStyle("-fx-font-size: 9px; -fx-font-style: italic;");
+        finalNote.setWrapText(true);
+
+        instructionsContainer.getChildren().addAll(instruction1, instruction2, instruction3, instruction4, finalNote);
+
+        leftSide.getChildren().addAll(accountTextLabel, accountNumberLabel, instructionsLabel, instructionsContainer);
+
+        // Right side: Bank Selection
+        VBox rightSide = new VBox(8);
+        rightSide.setAlignment(Pos.CENTER_LEFT);
+        rightSide.setPrefWidth(250);
 
         Label bankLabel = new Label("Transfer Via");
-        bankLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+        bankLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
 
         bankGroup = new ToggleGroup();
 
@@ -138,133 +205,62 @@ public class PaymentView {
         dana.setToggleGroup(bankGroup);
         dana.setOnAction(e -> updateAccountNumber());
 
-        VBox radioContainer = new VBox(4);
-        radioContainer.getChildren().addAll(bcaBank, mandiriBank, bniBank, dana);
+        rightSide.getChildren().addAll(bankLabel, bcaBank, mandiriBank, bniBank, dana);
 
-        section.getChildren().addAll(bankLabel, radioContainer);
-        return section;
-    }
-
-    private VBox createPaymentDetailsSection() {
-        VBox section = new VBox(10);
-        section.setAlignment(Pos.CENTER);
-        section.setPrefWidth(400);
-
-        // Payment amount - fully vertical and centered
-        VBox amountContainer = new VBox(3);
-        amountContainer.setAlignment(Pos.CENTER);
-
-        Label amountTextLabel = new Label("Nominal Pembayaran");
-        amountTextLabel.setStyle("-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #666;");
-
-        paymentAmountLabel = new Label(UIUtil.formatCurrency(totalAmount));
-        paymentAmountLabel
-                .setStyle("-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: " + UIUtil.PRIMARY_COLOR + ";");
-
-        amountContainer.getChildren().addAll(amountTextLabel, paymentAmountLabel);
-
-        // Account number - fully vertical and centered
-        VBox accountContainer = new VBox(3);
-        accountContainer.setAlignment(Pos.CENTER);
-
-        Label accountTextLabel = new Label("Rekening Tujuan");
-        accountTextLabel.setStyle("-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #666;");
-
-        accountNumberLabel = new Label("BCA 098123765341");
-        accountNumberLabel.setStyle("-fx-font-size: 15px; -fx-font-weight: bold;");
-
-        accountContainer.getChildren().addAll(accountTextLabel, accountNumberLabel);
-
-        // Payment instructions - compact
-        Label instructionsLabel = new Label("Tata Cara Pembayaran");
-        instructionsLabel.setStyle("-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #666;");
-
-        VBox instructionsContainer = new VBox(2);
-        instructionsContainer.setPadding(new Insets(6));
-        instructionsContainer.setStyle("-fx-background-color: " + UIUtil.LIGHT_GRAY + "; -fx-background-radius: 5;");
-        instructionsContainer.setPrefWidth(400);
-
-        Label instruction1 = new Label("1. Masukkan Nomor Rekening Tujuan");
-        instruction1.setStyle("-fx-font-size: 10px; -fx-font-weight: bold;");
-
-        Label instruction2 = new Label(
-                "   Sistem akan menampilkan nomor rekening sesuai pilihan bank untuk transfer pembayaran.");
-        instruction2.setStyle("-fx-font-size: 9px;");
-        instruction2.setWrapText(true);
-
-        Label instruction3 = new Label("2. Transfer Sesuai Nominal");
-        instruction3.setStyle("-fx-font-size: 10px; -fx-font-weight: bold;");
-
-        Label instruction4 = new Label(
-                "   Lakukan transfer sejumlah total tagihan yang tertera, pastikan tidak kurang atau lebih. Simpan ...");
-        instruction4.setStyle("-fx-font-size: 9px;");
-        instruction4.setWrapText(true);
-
-        Label instruction5 = new Label("3. Unggah Bukti Pembayaran");
-        instruction5.setStyle("-fx-font-size: 10px; -fx-font-weight: bold;");
-
-        Label instruction6 = new Label(
-                "   Setelah melakukan transfer, unggah tangkapan layar (screenshot) bukti pembayaran melalui fit...");
-        instruction6.setStyle("-fx-font-size: 9px;");
-        instruction6.setWrapText(true);
-
-        Label finalNote = new Label(
-                "Setelah melakukan pembayaran, tunggu maksimal 1x24 jam untuk konfirmasi pesanan anda.");
-        finalNote.setStyle("-fx-font-size: 9px; -fx-font-style: italic;");
-        finalNote.setWrapText(true);
-
-        instructionsContainer.getChildren().addAll(
-                instruction1, instruction2, instruction3, instruction4,
-                instruction5, instruction6, finalNote);
-
-        section.getChildren().addAll(amountContainer, accountContainer, instructionsLabel, instructionsContainer);
-        return section;
+        secondHBox.getChildren().addAll(leftSide, rightSide);
+        return secondHBox;
     }
 
     private VBox createAddressSection() {
-        VBox section = new VBox(6);
+        VBox section = new VBox(8);
         section.setAlignment(Pos.CENTER);
+        section.setPrefWidth(500);
 
         Label addressLabel = new Label("Alamat Pengiriman");
-        addressLabel.setStyle("-fx-font-size: 15px; -fx-font-weight: bold;");
+        addressLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
 
-        addressArea = UIUtil.createTextArea("Masukkan alamat lengkap pengiriman...", 2);
-        addressArea.setPrefWidth(400);
-        addressArea.setMaxWidth(400);
+        addressArea = UIUtil.createTextArea("Masukkan alamat lengkap pengiriman...", 3);
+        addressArea.setPrefWidth(480);
+        addressArea.setMaxWidth(480);
 
         section.getChildren().addAll(addressLabel, addressArea);
         return section;
     }
 
     private VBox createUploadSection() {
-        VBox section = new VBox(6);
+        VBox section = new VBox(8);
         section.setAlignment(Pos.CENTER);
+        section.setPrefWidth(500);
 
-        uploadButton = new Button("Upload Bukti Pembayaran ↑");
-        uploadButton.setPrefSize(200, 32);
+        Label uploadLabel = new Label("Upload Bukti Pembayaran");
+        uploadLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+
+        uploadButton = new Button("Pilih File Bukti Pembayaran ↑");
+        uploadButton.setPrefSize(300, 40);
         uploadButton.setStyle("-fx-background-color: " + UIUtil.SECONDARY_COLOR +
-                "; -fx-text-fill: " + UIUtil.ACCENT_COLOR + "; -fx-font-size: 12px;" +
+                "; -fx-text-fill: " + UIUtil.ACCENT_COLOR + "; -fx-font-size: 14px;" +
                 "; -fx-background-radius: 8; -fx-cursor: hand;");
         uploadButton.setOnAction(e -> handleFileUpload());
 
-        section.getChildren().add(uploadButton);
+        section.getChildren().addAll(uploadLabel, uploadButton);
         return section;
     }
 
     private VBox createButtonSection() {
-        VBox buttonSection = new VBox(10);
+        VBox buttonSection = new VBox(15);
         buttonSection.setAlignment(Pos.CENTER);
+        buttonSection.setPrefWidth(500);
 
         Button cancelButton = new Button("Batal");
-        cancelButton.setPrefSize(200, 32);
+        cancelButton.setPrefSize(300, 40);
         cancelButton.setStyle("-fx-background-color: " + UIUtil.LIGHT_GRAY +
-                "; -fx-text-fill: black; -fx-background-radius: 8;");
+                "; -fx-text-fill: black; -fx-font-size: 14px; -fx-background-radius: 8;");
         cancelButton.setOnAction(e -> modalStage.close());
 
         Button confirmButton = new Button("Konfirmasi Pemesanan");
-        confirmButton.setPrefSize(200, 32);
+        confirmButton.setPrefSize(300, 40);
         confirmButton.setStyle("-fx-background-color: " + UIUtil.PRIMARY_COLOR +
-                "; -fx-text-fill: white; -fx-font-size: 12px; -fx-font-weight: bold;" +
+                "; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;" +
                 "; -fx-background-radius: 8; -fx-cursor: hand;");
         confirmButton.setOnAction(e -> handleConfirmOrder());
 
@@ -316,7 +312,7 @@ public class PaymentView {
         if (selectedProofFile != null) {
             uploadButton.setText("✓ " + selectedProofFile.getName());
             uploadButton.setStyle("-fx-background-color: " + UIUtil.SUCCESS_COLOR +
-                    "; -fx-text-fill: white; -fx-font-size: 13px;" +
+                    "; -fx-text-fill: white; -fx-font-size: 14px;" +
                     "; -fx-background-radius: 8; -fx-cursor: hand;");
         }
     }
